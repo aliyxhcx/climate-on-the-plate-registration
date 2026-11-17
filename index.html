@@ -437,26 +437,170 @@
       color: var(--gold);
     }
 
-    /* FILE INPUT */
-    .file-upload-wrapper {
+    /* CUSTOM FILE UPLOAD DROPZONE */
+    .file-dropzone {
       position: relative;
-      border: 1px dashed rgba(245, 210, 122, 0.42);
-      border-radius: 10px;
-      padding: 1.25rem;
+      border: 1.5px dashed rgba(245, 210, 122, 0.38);
+      border-radius: 12px;
+      padding: 1.5rem 1.25rem;
       text-align: center;
-      background: var(--bg-input);
-      transition: border-color 0.2s;
-    }
-
-    .file-upload-wrapper:hover {
-      border-color: var(--gold);
-    }
-
-    .file-upload-wrapper input[type="file"] {
-      width: 100%;
-      color: var(--text-muted);
-      font-size: 0.85rem;
+      background: linear-gradient(180deg, rgba(16, 8, 6, 0.9) 0%, rgba(28, 13, 9, 0.85) 100%);
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
       cursor: pointer;
+    }
+
+    .file-dropzone:hover,
+    .file-dropzone.dragover {
+      border-color: var(--gold);
+      background: rgba(217, 107, 22, 0.12);
+      box-shadow: 0 0 0 3px rgba(245, 210, 122, 0.1);
+    }
+
+    .file-dropzone.has-file {
+      border-style: solid;
+      border-color: rgba(245, 210, 122, 0.55);
+      background: rgba(24, 13, 9, 0.95);
+      padding: 1rem 1.15rem;
+    }
+
+    .file-dropzone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .dropzone-prompt {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      pointer-events: none;
+    }
+
+    .dropzone-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(245, 210, 122, 0.1);
+      border: 1px solid rgba(245, 210, 122, 0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      margin-bottom: 0.2rem;
+    }
+
+    .dropzone-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--cream);
+    }
+
+    .dropzone-btn-pill {
+      display: inline-block;
+      margin-top: 0.25rem;
+      padding: 0.42rem 1.05rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(166, 37, 16, 0.85), rgba(224, 122, 22, 0.85));
+      border: 1px solid rgba(245, 210, 122, 0.4);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .dropzone-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* PREVIEW STATE */
+    .file-preview {
+      display: none;
+      align-items: center;
+      gap: 0.9rem;
+      text-align: left;
+      position: relative;
+      z-index: 3;
+    }
+
+    .file-dropzone.has-file .dropzone-prompt {
+      display: none;
+    }
+
+    .file-dropzone.has-file .file-preview {
+      display: flex;
+    }
+
+    .preview-thumb {
+      width: 54px;
+      height: 54px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid rgba(245, 210, 122, 0.35);
+      background: #0c0705;
+      flex-shrink: 0;
+    }
+
+    .preview-pdf-badge {
+      width: 54px;
+      height: 54px;
+      border-radius: 8px;
+      border: 1px solid rgba(245, 210, 122, 0.35);
+      background: rgba(166, 37, 16, 0.25);
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .preview-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .preview-name {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--cream);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .preview-size {
+      font-size: 0.75rem;
+      color: var(--gold);
+      margin-top: 0.15rem;
+    }
+
+    .btn-remove-file {
+      position: relative;
+      z-index: 4;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(245, 210, 122, 0.25);
+      color: var(--cream);
+      border-radius: 8px;
+      padding: 0.4rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .btn-remove-file:hover {
+      background: rgba(185, 28, 28, 0.45);
+      border-color: #f87171;
     }
 
     /* SUBMIT BUTTON */
@@ -760,9 +904,34 @@
               <label class="field-label" for="receiptFile">
                 Payment Receipt (Screenshot / PDF) <span class="required">*</span>
               </label>
-              <div class="file-upload-wrapper">
+
+              <div class="file-dropzone" id="receiptDropzone">
                 <input type="file" id="receiptFile" accept="image/*,.pdf" required />
-                <span class="field-hint">Max file size: 5MB (PNG, JPG, or PDF)</span>
+
+                <!-- Default Upload Prompt -->
+                <div class="dropzone-prompt">
+                  <div class="dropzone-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                  </div>
+                  <div class="dropzone-title">Drag & drop your receipt here</div>
+                  <span class="dropzone-btn-pill">Choose Receipt File</span>
+                  <div class="dropzone-sub">PNG, JPG, or PDF • Max file size: 5MB</div>
+                </div>
+
+                <!-- File Selected Preview -->
+                <div class="file-preview" id="filePreview">
+                  <img id="previewThumb" class="preview-thumb" alt="Receipt preview" />
+                  <div id="previewPdfBadge" class="preview-pdf-badge" style="display: none;">PDF</div>
+                  <div class="preview-info">
+                    <div class="preview-name" id="previewName">receipt.png</div>
+                    <div class="preview-size" id="previewSize">0.00 MB • Ready to upload</div>
+                  </div>
+                  <button type="button" class="btn-remove-file" id="removeFileBtn">Remove</button>
+                </div>
               </div>
             </div>
           </div>
@@ -1046,6 +1215,73 @@
         zoomCard.classList.toggle("selected", radio.value.includes("Zoom") && radio.checked);
       });
     });
+
+    // ==========================================
+    // CUSTOM FILE DROPZONE & LIVE PREVIEW
+    // ==========================================
+    const receiptDropzone = document.getElementById("receiptDropzone");
+    const receiptInput = document.getElementById("receiptFile");
+    const previewThumb = document.getElementById("previewThumb");
+    const previewPdfBadge = document.getElementById("previewPdfBadge");
+    const previewName = document.getElementById("previewName");
+    const previewSize = document.getElementById("previewSize");
+    const removeFileBtn = document.getElementById("removeFileBtn");
+
+    ["dragenter", "dragover"].forEach(evt => {
+      receiptDropzone.addEventListener(evt, e => {
+        e.preventDefault();
+        receiptDropzone.classList.add("dragover");
+      });
+    });
+
+    ["dragleave", "drop"].forEach(evt => {
+      receiptDropzone.addEventListener(evt, () => {
+        receiptDropzone.classList.remove("dragover");
+      });
+    });
+
+    receiptInput.addEventListener("change", () => {
+      const file = receiptInput.files[0];
+      if (!file) {
+        clearReceiptPreview();
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        showError("Your payment receipt exceeds the 5MB limit. Please choose a smaller file.");
+        clearReceiptPreview();
+        return;
+      }
+
+      errorBanner.style.display = "none";
+      receiptDropzone.classList.add("has-file");
+      previewName.textContent = file.name;
+      previewSize.textContent = `${(file.size / (1024 * 1024)).toFixed(2)} MB • Ready to upload`;
+
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          previewThumb.src = e.target.result;
+          previewThumb.style.display = "block";
+          previewPdfBadge.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      } else {
+        previewThumb.style.display = "none";
+        previewPdfBadge.style.display = "flex";
+      }
+    });
+
+    removeFileBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      clearReceiptPreview();
+    });
+
+    function clearReceiptPreview() {
+      receiptInput.value = "";
+      previewThumb.src = "";
+      receiptDropzone.classList.remove("has-file");
+    }
 
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {
