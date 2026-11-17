@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Climate on the Plate | Registration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-dark: #0c0705;
+      --bg-card: rgba(24, 14, 10, 0.92);
+      --bg-input: rgba(12, 7, 5, 0.85);
+      --ember-red: #8b1e0f;
+      --ember-orange: #d96b16;
+      --gold: #f5d27a;
+      --cream: #fef0c7;
+      --text-main: #f3ece4;
+      --text-muted: #c2b2a3;
+      --border-gold: rgba(245, 210, 122, 0.25);
+      --border-focus: #f5d27a;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--bg-dark);
+      background-image:
+        radial-gradient(circle at 15% 10%, rgba(168, 41, 14, 0.35), transparent 45%),
+        radial-gradient(circle at 85% 20%, rgba(217, 107, 22, 0.25), transparent 40%),
+        radial-gradient(circle at 50% 90%, rgba(139, 30, 15, 0.25), transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      line-height: 1.65;
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    /* HERO BANNER (Inspired by Poster) */
+    .hero-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid var(--border-gold);
+      background: linear-gradient(135deg, #3b0806 0%, #7d190c 45%, #b84a14 85%, #d97c1e 100%);
+      padding: 2.75rem 2rem 2.25rem;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), inset 0 0 80px rgba(0, 0, 0, 0.45);
+      margin-bottom: 1.75rem;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(12, 7, 5, 0.85) 0%, transparent 45%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .badge-org {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--cream);
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(254, 240, 199, 0.3);
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-style: italic;
+      font-size: clamp(2.1rem, 5.5vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: 0.04em;
+      color: var(--cream);
+      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-featuring {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.25em;
+      text-transform: lowercase;
+      color: #fff;
+      margin: 0.75rem 0;
+    }
+
+    .hero-featuring::before,
+    .hero-featuring::after {
+      content: "";
+      height: 1px;
+      width: 60px;
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    .hero-subtitle {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-meta {
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.75rem 1.5rem;
+      background: rgba(12, 7, 5, 0.75);
+      border: 1px solid var(--border-gold);
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--cream);
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius);
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(8px);
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border-gold);
+      padding-bottom: 0.6rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .welcome-text p {
+      margin-bottom: 0.9rem;
+      font-size: 0.94rem;
+      color: var(--text-main);
+    }
+
+    .welcome-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .highlight {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* SPEAKERS GRID */
+    .speakers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .speaker-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(245, 210, 122, 0.18);
+      border-radius: 10px;
+      padding: 1.15rem;
+    }
+
+    .speaker-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ember-orange);
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .speaker-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 0.35rem;
+    }
+
+    .speaker-role {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* FORM FIELDS */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.15rem;
+    }
+
+    @media (min-width: 600px) {
+      .form-grid.two-col {
+        grid-template-columns: 1fr 1fr;
+      }
+      .span-2 {
+        grid-column: span 2;
+      }
+    }
+
+    label.field-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 0.45rem;
+    }
+
+    .required {
+      color: #f87171;
+      margin-left: 2px;
+    }
+
+    .field-hint {
+      display: block;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-top: 0.25rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.75rem 0.95rem;
+      background: var(--bg-input);
+      border: 1px solid rgba(245, 210, 122, 0.22);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.92rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(245, 210, 122, 0.15);
+    }
+
+    select option {
+      background: #180e0a;
+      color: var(--text-main);
+    }
+
+    /* CHECKBOX & RADIO */
+    .privacy-box {
+      background: rgba(139, 30, 15, 0.15);
+      border: 1px solid rgba(245, 210, 122, 0.22);
+      border-radius: 10px;
+      padding: 1.1rem;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      cursor: pointer;
+      font-size: 0.88rem;
+      color: var(--cream);
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      accent-color: var(--ember-orange);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .mode-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+    }
+
+    .mode-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 0.95rem 1rem;
+      background: var(--bg-input);
+      border: 1px solid rgba(245, 210, 122, 0.22);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-card input {
+      position: absolute;
+      opacity: 0;
+    }
+
+    .mode-card.selected {
+      border-color: var(--gold);
+      background: rgba(217, 107, 22, 0.15);
+      box-shadow: 0 0 0 1px var(--gold);
+    }
+
+    .mode-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--cream);
+    }
+
+    .mode-price {
+      font-size: 0.82rem;
+      color: var(--gold);
+      font-weight: 600;
+      margin-top: 0.2rem;
+    }
+
+    /* PAYMENT INFO BOX */
+    .payment-details-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed rgba(245, 210, 122, 0.35);
+      border-radius: 10px;
+      padding: 1.15rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.87rem;
+    }
+
+    .payment-details-box ul {
+      margin: 0.5rem 0 0.75rem 1.25rem;
+      color: var(--text-muted);
+    }
+
+    .payment-channels {
+      display: grid;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(245, 210, 122, 0.15);
+    }
+
+    .channel-item {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      font-size: 0.86rem;
+    }
+
+    .channel-item strong {
+      color: var(--gold);
+    }
+
+    /* FILE INPUT */
+    .file-upload-wrapper {
+      position: relative;
+      border: 1px dashed rgba(245, 210, 122, 0.4);
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-align: center;
+      background: var(--bg-input);
+      transition: border-color 0.2s;
+    }
+
+    .file-upload-wrapper:hover {
+      border-color: var(--gold);
+    }
+
+    .file-upload-wrapper input[type="file"] {
+      width: 100%;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    /* SUBMIT BUTTON */
+    .btn-submit {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #b83214 0%, #e07a16 100%);
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(217, 107, 22, 0.35);
+      transition: transform 0.15s, filter 0.2s;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    /* THANK YOU SCREEN */
+    #thankYouScreen {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .thank-you-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .error-banner {
+      display: none;
+      background: rgba(185, 28, 28, 0.25);
+      border: 1px solid #f87171;
+      color: #fecaca;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 520px) {
+      .card { padding: 1.35rem 1.15rem; }
+      .mode-options { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- HERO HEADER -->
+    <header class="hero-card">
+      <div class="hero-content">
+        <div class="badge-org">PUP College of Science • BSFT 4-1N</div>
+        <h1 class="hero-title">Climate on the Plate</h1>
+        <div class="hero-featuring">featuring</div>
+        <div class="hero-subtitle">Food Safety Challenges in a Changing World</div>
+        <div class="hero-meta">
+          <span>📅 November 27, 2026 (Friday)</span>
+          <span>⏰ 1:00 PM – 5:00 PM PHT</span>
+          <span>🏛️ Bulwagang Bonifacio, 4th Flr, PUP-NALLRC Bldg, PUP Main</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- REGISTRATION FORM CONTAINER -->
+    <div id="formContainer">
+
+      <!-- WELCOME MESSAGE -->
+      <section class="card welcome-text">
+        <h2 class="section-title">🔥 Welcome to the Arena, Tributes!</h2>
+        <p>
+          The odds may be ever in your favor, but will your food safety knowledge be? Welcome to
+          <span class="highlight">Climate on the Plate: Food Safety Challenges in a Changing World</span>,
+          brought to you by <strong>BSFT 4-1N</strong>! Step into an arena where the challenges go beyond
+          survival and where knowledge is your greatest weapon.
+        </p>
+        <p>
+          Join us on <span class="highlight">November 27, 2026 (Friday)</span>, from
+          <span class="highlight">1:00 PM to 5:00 PM</span>, at the
+          <span class="highlight">Bulwagang Bonifacio, 4th Floor, PUP-NALLRC Building, PUP Main Campus</span>.
+        </p>
+        <p>
+          As the climate changes, so do the challenges surrounding our food systems. Get ready to explore
+          the growing threats to food safety, discover ways to combat these challenges, and equip yourself
+          with knowledge that could make all the difference. Because in this arena, food safety is not just
+          a skill—it's a matter of survival! 🌱 🍽️
+        </p>
+        <p>
+          <strong>🎯 Are you ready to take on the challenge?</strong><br />
+          Secure your spot, gather your courage, and enter the arena! May your knowledge be sharp,
+          your awareness stronger, and the odds of food safety be ever in your favor.
+        </p>
+      </section>
+
+      <!-- SPEAKERS -->
+      <section class="card">
+        <h2 class="section-title">🎙️ Featured Speakers</h2>
+        <div class="speakers-grid">
+          <div class="speaker-box">
+            <div class="speaker-label">Speaker 1</div>
+            <div class="speaker-name">Jin Mark De Guia Pagulayan, PFT, MTM</div>
+            <div class="speaker-role">
+              Food Technology Faculty Member<br />
+              Master of Technology Management<br />
+              University of the Philippines (UP) Diliman
+            </div>
+          </div>
+          <div class="speaker-box">
+            <div class="speaker-label">Speaker 2</div>
+            <div class="speaker-name">Alvier Jade B. Remollo, PFT, RChT</div>
+            <div class="speaker-role">
+              Science Research Specialist I<br />
+              Department of Agriculture–Bureau of Agriculture and Fisheries Standards<br />
+              University of the Philippines (UP) Diliman
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <form id="registrationForm">
+
+        <!-- DATA PRIVACY -->
+        <section class="card">
+          <h2 class="section-title">🛡️ Data Privacy Notice</h2>
+          <div class="privacy-box">
+            In compliance with the <strong>Data Privacy Act of 2012 (Republic Act No. 10173)</strong>, the organizers
+            of this seminar are committed to protecting your personal information. The data collected in this
+            registration form will be used solely for the purpose of seminar administration, documentation,
+            issuance of certificates, and future communication related to this event. Your information will be
+            kept confidential and will not be shared with third parties without your consent. By proceeding with
+            this registration, you are giving your consent for us to collect and process your personal data in
+            accordance with our data privacy policy.
+          </div>
+          <label class="checkbox-row">
+            <input type="checkbox" id="privacyConsent" required />
+            <span>I have read and understood the Data Privacy Notice and I voluntarily consent to the collection and processing of my personal information for this seminar. <span class="required">*</span></span>
+          </label>
+        </section>
+
+        <!-- PERSONAL & STUDENT INFORMATION -->
+        <section class="card">
+          <h2 class="section-title">👤 Personal & Student Information</h2>
+          <div class="form-grid two-col">
+            <div class="span-2">
+              <label class="field-label" for="fullName">
+                Full Name (First Name, Middle Initial, Last Name) <span class="required">*</span>
+              </label>
+              <input type="text" id="fullName" placeholder="e.g., Juan A. Dela Cruz" required />
+            </div>
+
+            <div>
+              <label class="field-label" for="email">
+                Email Address <span class="required">*</span>
+              </label>
+              <input type="email" id="email" placeholder="juandelacruz@iskolarngbayan.pup.edu.ph" required />
+              <span class="field-hint">Zoom link & certificate will be sent here.</span>
+            </div>
+
+            <div>
+              <label class="field-label" for="contactNumber">
+                Contact Number <span class="required">*</span>
+              </label>
+              <input type="tel" id="contactNumber" placeholder="09XXXXXXXXX" required />
+            </div>
+
+            <div>
+              <label class="field-label" for="studentId">
+                Student ID <span class="required">*</span>
+              </label>
+              <input type="text" id="studentId" placeholder="202X-XXXXX-MN-X" pattern="202[0-9]-[0-9]{5}-[A-Za-z]{2}-[0-9]" title="Format: 202X-XXXXX-MN-X" required />
+              <span class="field-hint">Format: 202X-XXXXX-MN-X</span>
+            </div>
+
+            <div>
+              <label class="field-label" for="section">
+                Year and Section <span class="required">*</span>
+              </label>
+              <select id="section" required>
+                <option value="" disabled selected>Select your year & section</option>
+                <option value="BSFT 1-1D">BSFT 1-1D</option>
+                <option value="BSFT 1-1N">BSFT 1-1N</option>
+                <option value="BSFT 2-1D">BSFT 2-1D</option>
+                <option value="BSFT 2-1N">BSFT 2-1N</option>
+                <option value="BSFT 3-1D">BSFT 3-1D</option>
+                <option value="BSFT 3-1N">BSFT 3-1N</option>
+                <option value="BSFT 4-1D">BSFT 4-1D</option>
+                <option value="BSFT 4-1N">BSFT 4-1N</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- REGISTRATION FEE & PAYMENT -->
+        <section class="card">
+          <h2 class="section-title">💳 Registration Fee & Payment</h2>
+
+          <div class="payment-details-box">
+            <p>
+              The <strong>Climate on the Plate: Food Safety Challenges in a Changing World</strong> has a
+              registration fee of <span class="highlight">₱80.00 for on-site participants</span> and
+              <span class="highlight">₱40.00 for Zoom participants</span>.
+            </p>
+            <p style="margin-top: 0.6rem;"><strong>Inclusions of the Registration Fee:</strong></p>
+            <ul>
+              <li>Loot Bag (On-site Participants)</li>
+              <li>Snacks & Water</li>
+              <li>Chance to be included in the raffle draw</li>
+            </ul>
+            <p style="font-size: 0.82rem; color: var(--text-muted);">
+              <strong>For Zoom Participants:</strong> The meeting link will be sent to your registered email address.<br />
+              <strong>Note:</strong> Please indicate your <strong>FULL NAME</strong> and <strong>SECTION</strong> in the message section of your payment method.
+            </p>
+
+            <!-- TODO: Fill in your actual account numbers and names below -->
+            <div class="payment-channels">
+              <div class="channel-item"><span><strong>GCash:</strong></span> <span>09XX-XXX-XXXX (Account Name)</span></div>
+              <div class="channel-item"><span><strong>Maribank:</strong></span> <span>XXXX-XXXX-XXXX (Account Name)</span></div>
+              <div class="channel-item"><span><strong>Landbank:</strong></span> <span>XXXX-XXXX-XX (Account Name)</span></div>
+            </div>
+          </div>
+
+          <div class="form-grid two-col">
+            <div class="span-2">
+              <label class="field-label">Attendance Mode <span class="required">*</span></label>
+              <div class="mode-options">
+                <label class="mode-card selected" id="modeOnsiteCard">
+                  <input type="radio" name="attendanceMode" value="On-site (₱80.00)" checked />
+                  <span class="mode-title">🏛️ On-site Participant</span>
+                  <span class="mode-price">₱80.00 (Bulwagang Bonifacio)</span>
+                </label>
+                <label class="mode-card" id="modeZoomCard">
+                  <input type="radio" name="attendanceMode" value="Zoom (₱40.00)" />
+                  <span class="mode-title">💻 Zoom Participant</span>
+                  <span class="mode-price">₱40.00 (Online)</span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="field-label" for="eWallet">
+                E-wallet / Bank Used <span class="required">*</span>
+              </label>
+              <input type="text" id="eWallet" placeholder="e.g., GCash, Maribank, LBP, BPI" required />
+            </div>
+
+            <div>
+              <label class="field-label" for="accountName">
+                Your Account Name <span class="required">*</span>
+              </label>
+              <input type="text" id="accountName" placeholder="Account holder name" required />
+            </div>
+
+            <div>
+              <label class="field-label" for="accountNumber">
+                Your Account Number <span class="required">*</span>
+              </label>
+              <input type="text" id="accountNumber" placeholder="09XX-XXX-XXXX or bank acct no." required />
+            </div>
+
+            <div>
+              <label class="field-label" for="amountSent">
+                Amount Sent <span class="required">*</span>
+              </label>
+              <input type="text" id="amountSent" placeholder="Php 80.00" required />
+            </div>
+
+            <div class="span-2">
+              <label class="field-label" for="referenceNumber">
+                Reference Number <span class="required">*</span>
+              </label>
+              <input type="text" id="referenceNumber" placeholder="Enter transaction reference number" required />
+            </div>
+
+            <div class="span-2">
+              <label class="field-label" for="receiptFile">
+                Payment Receipt (Screenshot / PDF) <span class="required">*</span>
+              </label>
+              <div class="file-upload-wrapper">
+                <input type="file" id="receiptFile" accept="image/*,.pdf" required />
+                <span class="field-hint">Max file size: 5MB (PNG, JPG, or PDF)</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- COMMENTS OR QUESTIONS -->
+        <section class="card">
+          <h2 class="section-title">💬 Comments or Questions</h2>
+          <label class="field-label" for="comments">
+            Do you have any questions or concerns you’d like to raise before the seminar?
+          </label>
+          <textarea id="comments" rows="3" placeholder="Type your questions or concerns here (optional)..."></textarea>
+        </section>
+
+        <div id="errorBanner" class="error-banner"></div>
+
+        <button type="submit" id="submitBtn" class="btn-submit">
+          Enter the Arena & Submit Registration 🏹
+        </button>
+
+      </form>
+    </div>
+
+    <!-- THANK YOU SCREEN -->
+    <section id="thankYouScreen" class="card">
+      <div class="thank-you-icon">🏹🔥</div>
+      <h2 class="hero-subtitle" style="margin-bottom: 0.75rem;">Thank you for registering!</h2>
+      <p style="font-size: 1rem; color: var(--cream); max-width: 540px; margin: 0 auto 1.5rem;">
+        The countdown to the Games has begun. We can't wait to see you there!<br />
+        <strong style="color: var(--gold);">MAY THE ODDS BE EVER IN YOUR FAVOR!</strong>
+      </p>
+      <button type="button" class="btn-submit" style="max-width: 280px;" onclick="location.reload()">
+        Submit Another Response
+      </button>
+    </section>
+
+  </div>
+
+  <script>
+    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW:
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby1CrsuN2Fbzqo4t1nTGkW9v3zy_ZJp-QYaoez-2WuNV5NQhkEL0ShgDOSnkowL0OvEWQ/exec";
+
+    // Handle Attendance Mode visual selection
+    const modeRadios = document.querySelectorAll('input[name="attendanceMode"]');
+    const onsiteCard = document.getElementById("modeOnsiteCard");
+    const zoomCard = document.getElementById("modeZoomCard");
+
+    modeRadios.forEach(radio => {
+      radio.addEventListener("change", () => {
+        onsiteCard.classList.toggle("selected", radio.value.includes("On-site") && radio.checked);
+        zoomCard.classList.toggle("selected", radio.value.includes("Zoom") && radio.checked);
+      });
+    });
+
+    // Helper: Convert uploaded file to Base64
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Form Submission
+    const form = document.getElementById("registrationForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const errorBanner = document.getElementById("errorBanner");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorBanner.style.display = "none";
+
+      if (GAS_WEB_APP_URL === "YOUR_GAS_WEB_APP_URL_HERE") {
+        showError("Developer Note: Please set your Google Apps Script Web App URL in index.html.");
+        return;
+      }
+
+      const fileInput = document.getElementById("receiptFile");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        showError("Please upload your payment receipt.");
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        showError("Your payment receipt exceeds the 5MB limit. Please upload a smaller image.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Uploading Receipt & Registering...";
+
+      try {
+        const base64Receipt = await fileToBase64(file);
+        const attendanceMode = document.querySelector('input[name="attendanceMode"]:checked').value;
+
+        const payload = {
+          privacyConsent: document.getElementById("privacyConsent").checked,
+          fullName: document.getElementById("fullName").value.trim(),
+          email: document.getElementById("email").value.trim(),
+          contactNumber: document.getElementById("contactNumber").value.trim(),
+          studentId: document.getElementById("studentId").value.trim(),
+          section: document.getElementById("section").value,
+          attendanceMode: attendanceMode,
+          eWallet: document.getElementById("eWallet").value.trim(),
+          accountName: document.getElementById("accountName").value.trim(),
+          accountNumber: document.getElementById("accountNumber").value.trim(),
+          amountSent: document.getElementById("amountSent").value.trim(),
+          referenceNumber: document.getElementById("referenceNumber").value.trim(),
+          receiptBase64: base64Receipt,
+          receiptName: file.name,
+          receiptMimeType: file.type,
+          comments: document.getElementById("comments").value.trim()
+        };
+
+        // Using text/plain avoids CORS preflight issues with Google Apps Script
+        const response = await fetch(GAS_WEB_APP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+          document.getElementById("formContainer").style.display = "none";
+          document.getElementById("thankYouScreen").style.display = "block";
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          throw new Error(result.message || "Submission failed.");
+        }
+      } catch (err) {
+        showError("Something went wrong: " + err.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Enter the Arena & Submit Registration 🏹";
+      }
+    });
+
+    function showError(msg) {
+      errorBanner.textContent = msg;
+      errorBanner.style.display = "block";
+    }
+  </script>
+</body>
+</html>
