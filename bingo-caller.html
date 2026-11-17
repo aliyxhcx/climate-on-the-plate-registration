@@ -1015,12 +1015,17 @@
 
       const letters = ["B", "I", "N", "G", "O"];
       let tickCount = 0;
+      let reel1Locked = false;
 
       const spinInterval = setInterval(() => {
-        const randL = letters[Math.floor(Math.random() * letters.length)];
+        // Only randomize Reel 1 while it is still spinning
+        if (!reel1Locked) {
+          const randL = letters[Math.floor(Math.random() * letters.length)];
+          ballDisplay.className = `bingo-ball ball-${randL}`;
+          ballDisplay.textContent = randL;
+        }
+
         const randItem = BINGO_POOL[Math.floor(Math.random() * BINGO_POOL.length)];
-        ballDisplay.className = `bingo-ball ball-${randL}`;
-        ballDisplay.textContent = randL;
         wordDisplay.textContent = randItem.word;
         playTone(220 + (tickCount % 4) * 35, 0.045, "square", 0.04);
         tickCount++;
@@ -1028,6 +1033,7 @@
 
       // Lock Reel 1 (Letter Ball) at 1.1s
       setTimeout(() => {
+        reel1Locked = true;
         reel1.classList.remove("spinning");
         reel1.classList.add("locked");
         ballDisplay.className = `bingo-ball ball-${picked.letter}`;
@@ -1040,6 +1046,11 @@
         clearInterval(spinInterval);
         reel2.classList.remove("spinning");
         reel2.classList.add("locked");
+
+        // Guarantee Reel 1 matches Reel 2's letter
+        ballDisplay.className = `bingo-ball ball-${picked.letter}`;
+        ballDisplay.textContent = picked.letter;
+
         playLockChime(true);
 
         if (clueMode) {
