@@ -731,7 +731,7 @@
       .reel-slot { height: 140px; }
       .slot-wrapper { padding-right: 0; }
       .lever-assembly { display: none; }
-      .board-columns { gap: 0.25rem; }
+      .board-headers, .board-columns { gap: 0.25rem; }
       .board-term { font-size: 0.6rem; padding: 0.3rem 0.15rem; }
     }
   </style>
@@ -1126,27 +1126,44 @@
     function renderMasterBoard() {
       const board = document.getElementById("masterBoard");
       board.innerHTML = "";
+      board.className = ""; // Wrapper holds headers grid + symmetrical 8x5 terms grid
+
       const letters = ["B", "I", "N", "G", "O"];
       const latestWord = calledWords[calledWords.length - 1] || "";
 
+      // 1. Header Row (B I N G O)
+      const headersGrid = document.createElement("div");
+      headersGrid.className = "board-headers";
       letters.forEach(letter => {
-        const colDiv = document.createElement("div");
         const hdr = document.createElement("div");
         hdr.className = `board-col-header hdr-${letter}`;
         hdr.textContent = letter;
-        colDiv.appendChild(hdr);
+        headersGrid.appendChild(hdr);
+      });
+      board.appendChild(headersGrid);
 
-        BINGO_POOL.filter(i => i.letter === letter).forEach(item => {
+      // 2. Symmetrical 8x5 Terms Grid (equal height & width for every cell)
+      const termsGrid = document.createElement("div");
+      termsGrid.className = "board-columns";
+
+      const grouped = {};
+      letters.forEach(l => {
+        grouped[l] = BINGO_POOL.filter(i => i.letter === l);
+      });
+
+      for (let r = 0; r < 8; r++) {
+        letters.forEach(letter => {
+          const item = grouped[letter][r];
           const termDiv = document.createElement("div");
           termDiv.className = "board-term";
           if (calledWords.includes(item.word)) termDiv.classList.add("called");
           if (item.word === latestWord) termDiv.classList.add("latest");
           termDiv.textContent = item.word;
-          colDiv.appendChild(termDiv);
+          termsGrid.appendChild(termDiv);
         });
+      }
 
-        board.appendChild(colDiv);
-      });
+      board.appendChild(termsGrid);
 
       const countStr = String(calledWords.length).padStart(2, "0");
       ledCounter.textContent = `CALLED: ${countStr} / 40`;
