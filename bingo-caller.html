@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Climate Bingo Caller | Climate on the Plate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-dark: #080303;
+      --crimson: #7d150a;
+      --crimson-bright: #b82914;
+      --ember: #e07a16;
+      --gold: #f5d27a;
+      --gold-dark: #9c7227;
+      --cream: #fef0c7;
+      --panel-bg: rgba(20, 9, 7, 0.9);
+      --border-gold: rgba(245, 210, 122, 0.32);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--cream);
+      min-height: 100vh;
+      padding: 1.5rem 1rem 3rem;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Live Ember Canvas */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse at 50% 105%, rgba(184, 41, 20, 0.52) 0%, rgba(92, 17, 13, 0.3) 45%, #080303 85%);
+      pointer-events: none;
+    }
+
+    #emberCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .page-wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    /* TOP BAR */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .brand-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1rem, 2.2vw, 1.35rem);
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .pill-btn {
+      background: rgba(25, 11, 8, 0.85);
+      border: 1px solid var(--border-gold);
+      color: var(--cream);
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .pill-btn:hover {
+      border-color: var(--gold);
+      background: rgba(184, 41, 20, 0.3);
+    }
+
+    .pill-btn.active {
+      background: linear-gradient(135deg, #8b1e0f, #d96b16);
+      border-color: var(--gold);
+      color: #fff;
+    }
+
+    /* ==========================================
+       2-REEL HUNGER GAMES SLOT MACHINE CABINET
+       ========================================== */
+    .machine-stage {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .slot-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 780px;
+      padding-right: 52px; /* Space for the lever on the right */
+    }
+
+    /* ARCH MARQUEE ("CLIMATE BINGO") */
+    .marquee-arch {
+      width: 76%;
+      margin: 0 auto;
+      background: linear-gradient(180deg, #9c200e 0%, #5c110d 100%);
+      border: 4px solid var(--gold);
+      border-bottom: none;
+      border-radius: 160px 160px 0 0;
+      padding: 1.15rem 1.5rem 0.9rem;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 -8px 30px rgba(224, 122, 22, 0.35), inset 0 6px 18px rgba(254, 240, 199, 0.2);
+    }
+
+    .marquee-inner {
+      background: radial-gradient(circle at 50% 80%, #f59e0b 0%, #b45309 65%, #78350f 100%);
+      border: 2px solid var(--cream);
+      border-radius: 130px 130px 10px 10px;
+      padding: 0.7rem 1rem 0.55rem;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .marquee-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.35rem, 3.6vw, 2.15rem);
+      font-weight: 900;
+      color: #2b0905;
+      text-shadow: 0 1px 0 rgba(254, 240, 199, 0.7);
+      letter-spacing: 0.08em;
+      line-height: 1.1;
+    }
+
+    .marquee-sub {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      color: #450a0a;
+      text-transform: uppercase;
+      margin-top: 0.15rem;
+    }
+
+    /* Blinking Bulbs Strip */
+    .bulb-strip {
+      display: flex;
+      justify-content: space-around;
+      padding: 0.35rem 1rem 0;
+    }
+
+    .bulb {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--cream);
+      box-shadow: 0 0 8px var(--gold);
+      animation: bulbBlink 1.2s infinite alternate;
+    }
+
+    .bulb:nth-child(even) {
+      animation-delay: 0.6s;
+    }
+
+    @keyframes bulbBlink {
+      0% { opacity: 0.45; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 12px #fff; }
+    }
+
+    /* MAIN CABINET BODY */
+    .cabinet-body {
+      background: linear-gradient(180deg, #8b1a0c 0%, #590d07 55%, #3d0804 100%);
+      border: 4px solid var(--gold);
+      border-radius: 22px;
+      padding: 1.5rem 1.5rem 1.35rem;
+      box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.85),
+        inset 0 2px 12px rgba(254, 240, 199, 0.25),
+        inset 0 -8px 20px rgba(0, 0, 0, 0.5);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* REEL WINDOW FRAME */
+    .reels-frame {
+      background: #120605;
+      border: 4px solid #d4a853;
+      border-radius: 16px;
+      padding: 1.1rem;
+      box-shadow: inset 0 10px 25px rgba(0, 0, 0, 0.9), 0 4px 12px rgba(0, 0, 0, 0.6);
+      position: relative;
+      display: grid;
+      grid-template-columns: 165px 1fr;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    /* Side Pointer Triangles (like the reference image) */
+    .pointer-left,
+    .pointer-right {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      z-index: 5;
+      filter: drop-shadow(0 0 6px rgba(245, 210, 122, 0.7));
+    }
+
+    .pointer-left {
+      left: -14px;
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+      border-left: 16px solid var(--gold);
+    }
+
+    .pointer-right {
+      right: -14px;
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+      border-right: 16px solid var(--gold);
+    }
+
+    /* INDIVIDUAL REEL SLOTS */
+    .reel-slot {
+      height: 175px;
+      background: linear-gradient(180deg, #1b0a07 0%, #fef0c7 14%, #fffdf7 50%, #fef0c7 86%, #1b0a07 100%);
+      border: 3px solid var(--gold-dark);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 16px 20px rgba(0, 0, 0, 0.45), inset 0 -16px 20px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Horizontal center win-line highlight */
+    .reel-slot::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.35) 100%);
+      pointer-events: none;
+    }
+
+    .reel-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0.75rem;
+      width: 100%;
+      transition: transform 0.15s ease;
+    }
+
+    .reel-slot.spinning .reel-content {
+      animation: reelBlurTick 0.09s linear infinite;
+    }
+
+    @keyframes reelBlurTick {
+      0% { transform: translateY(-16px); filter: blur(1.5px); opacity: 0.75; }
+      50% { transform: translateY(16px); filter: blur(1.5px); opacity: 0.75; }
+      100% { transform: translateY(-16px); filter: blur(1.5px); opacity: 0.75; }
+    }
+
+    .reel-slot.locked .reel-content {
+      animation: reelSnap 0.35s cubic-bezier(0.22, 1.4, 0.36, 1);
+    }
+
+    @keyframes reelSnap {
+      0% { transform: translateY(-22px) scale(0.95); }
+      65% { transform: translateY(5px) scale(1.04); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    /* BINGO BALL IN REEL 1 */
+    .bingo-ball {
+      width: 112px;
+      height: 112px;
+      margin: 0 auto;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 3.4rem;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
+      box-shadow:
+        inset -10px -12px 22px rgba(0, 0, 0, 0.45),
+        inset 8px 8px 18px rgba(255, 255, 255, 0.35),
+        0 8px 18px rgba(0, 0, 0, 0.45);
+      border: 3px solid rgba(255, 255, 255, 0.65);
+      position: relative;
+    }
+
+    .bingo-ball::before {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      pointer-events: none;
+    }
+
+    /* Color themes per BINGO letter */
+    .ball-B { background: radial-gradient(circle at 32% 30%, #ef4444, #991b1b); }
+    .ball-I { background: radial-gradient(circle at 32% 30%, #f59e0b, #b45309); }
+    .ball-N { background: radial-gradient(circle at 32% 30%, #eab308, #854d0e); }
+    .ball-G { background: radial-gradient(circle at 32% 30%, #10b981, #065f46); }
+    .ball-O { background: radial-gradient(circle at 32% 30%, #3b82f6, #1e3a8a); }
+    .ball-idle { background: radial-gradient(circle at 32% 30%, #78350f, #2b150e); color: var(--gold); font-size: 2.3rem; }
+
+    /* WORD DISPLAY IN REEL 2 */
+    .word-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #8b1e0f;
+      margin-bottom: 0.35rem;
+    }
+
+    .word-text {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(1.35rem, 3.2vw, 2.15rem);
+      font-weight: 900;
+      color: #180e0a;
+      line-height: 1.15;
+      word-break: break-word;
+    }
+
+    .word-text.hidden-clue {
+      font-family: 'Cinzel', serif;
+      color: #991b0c;
+      letter-spacing: 0.12em;
+    }
+
+    /* LED CLUE / COUNTER SCREEN (Bottom of Machine) */
+    .led-console {
+      margin-top: 1.15rem;
+      background: #0c0605;
+      border: 3px solid #b58938;
+      border-radius: 12px;
+      padding: 0.9rem 1.15rem;
+      box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.9);
+    }
+
+    .led-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--ember);
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+
+    .led-clue-text {
+      font-size: clamp(0.92rem, 1.9vw, 1.08rem);
+      font-weight: 600;
+      color: var(--gold);
+      line-height: 1.45;
+      min-height: 2.8em;
+      display: flex;
+      align-items: center;
+    }
+
+    /* ACTION DECK */
+    .deck-buttons {
+      display: flex;
+      gap: 0.85rem;
+      margin-top: 1.1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-spin {
+      flex: 2;
+      min-width: 200px;
+      padding: 0.95rem 1.5rem;
+      border: 2px solid var(--cream);
+      border-radius: 12px;
+      background: linear-gradient(180deg, #f59e0b 0%, #d97706 55%, #b45309 100%);
+      color: #2b0905;
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #78350f, 0 10px 25px rgba(0, 0, 0, 0.5);
+      transition: transform 0.1s, box-shadow 0.1s, filter 0.2s;
+    }
+
+    .btn-spin:hover:not(:disabled) {
+      filter: brightness(1.08);
+    }
+
+    .btn-spin:active:not(:disabled) {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #78350f, 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .btn-spin:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-reveal {
+      flex: 1;
+      min-width: 160px;
+      padding: 0.95rem 1.2rem;
+      border: 2px solid var(--gold);
+      border-radius: 12px;
+      background: linear-gradient(180deg, #b82914, #7d150a);
+      color: var(--cream);
+      font-family: 'Cinzel', serif;
+      font-size: 0.98rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #450a0a;
+      display: none;
+      animation: pulseReveal 1.3s ease-in-out infinite;
+    }
+
+    @keyframes pulseReveal {
+      0%, 100% { box-shadow: 0 6px 0 #450a0a, 0 0 12px rgba(245, 210, 122, 0.3); }
+      50% { box-shadow: 0 6px 0 #450a0a, 0 0 24px rgba(245, 210, 122, 0.75); }
+    }
+
+    /* INTERACTIVE PULL LEVER (Right Side) */
+    .lever-assembly {
+      position: absolute;
+      right: 6px;
+      top: 42%;
+      width: 48px;
+      height: 170px;
+      cursor: pointer;
+      z-index: 1;
+      user-select: none;
+    }
+
+    .lever-mount {
+      position: absolute;
+      left: 0;
+      bottom: 18px;
+      width: 24px;
+      height: 58px;
+      background: linear-gradient(90deg, #b58938, #f5d27a);
+      border: 2px solid #5c3d0d;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .lever-arm {
+      position: absolute;
+      left: 16px;
+      bottom: 48px;
+      width: 10px;
+      height: 112px;
+      background: linear-gradient(90deg, #a1a1aa, #f4f4f5, #71717a);
+      border-radius: 6px;
+      transform-origin: bottom center;
+      transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .lever-knob {
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 32% 30%, #f87171, #b91c1c, #450a0a);
+      border: 2px solid var(--gold);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65);
+    }
+
+    .lever-assembly.pulled .lever-arm {
+      transform: scaleY(0.35) rotate(12deg);
+    }
+
+    /* ==========================================
+       BOTTOM PANELS: BOARD + CARD VERIFIER
+       ========================================== */
+    .lower-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .panel-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-gold);
+      border-radius: 16px;
+      padding: 1.35rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
+    }
+
+    .panel-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border-gold);
+      padding-bottom: 0.55rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* 40-TERM MASTER BOARD */
+    .board-columns {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.45rem;
+    }
+
+    .board-col-header {
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      padding: 0.45rem;
+      border-radius: 6px;
+      color: #fff;
+      margin-bottom: 0.4rem;
+    }
+
+    .hdr-B { background: #991b1b; }
+    .hdr-I { background: #b45309; }
+    .hdr-N { background: #854d0e; }
+    .hdr-G { background: #065f46; }
+    .hdr-O { background: #1e3a8a; }
+
+    .board-term {
+      font-size: 0.69rem;
+      font-weight: 600;
+      padding: 0.4rem 0.32rem;
+      margin-bottom: 0.35rem;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(245, 210, 122, 0.12);
+      color: #8c7a6b;
+      text-align: center;
+      line-height: 1.25;
+      transition: all 0.25s;
+    }
+
+    .board-term.called {
+      background: rgba(245, 210, 122, 0.18);
+      border-color: var(--gold);
+      color: var(--cream);
+      font-weight: 700;
+      box-shadow: 0 0 10px rgba(245, 210, 122, 0.18);
+    }
+
+    .board-term.latest {
+      background: linear-gradient(135deg, #b82914, #e07a16);
+      border-color: #fff;
+      color: #fff;
+      transform: scale(1.03);
+    }
+
+    /* CARD VERIFIER ("NO TO PAX SILICA" CHECK) */
+    .verify-form {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .verify-input {
+      flex: 1;
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      background: #0d0605;
+      border: 1px solid var(--border-gold);
+      color: var(--cream);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .verify-input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    .btn-verify {
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--gold);
+      background: linear-gradient(135deg, #8b1e0f, #d96b16);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    .verify-status-banner {
+      display: none;
+      padding: 0.7rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 0.85rem;
+      text-align: center;
+    }
+
+    .verify-status-banner.win {
+      display: block;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid #34d399;
+      color: #a7f3d0;
+    }
+
+    .verify-status-banner.no-win {
+      display: block;
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid #fbbf24;
+      color: #fde68a;
+    }
+
+    .verify-status-banner.error {
+      display: block;
+      background: rgba(220, 38, 38, 0.25);
+      border: 1px solid #f87171;
+      color: #fecaca;
+    }
+
+    .mini-bingo-grid {
+      display: none;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+    }
+
+    .mini-bingo-grid.visible {
+      display: grid;
+    }
+
+    .mini-head {
+      text-align: center;
+      font-weight: 800;
+      font-size: 0.8rem;
+      background: #5c110d;
+      color: var(--gold);
+      padding: 0.3rem;
+      border-radius: 4px;
+    }
+
+    .mini-cell {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(245, 210, 122, 0.16);
+      border-radius: 4px;
+      padding: 0.35rem 0.2rem;
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 0.62rem;
+      line-height: 1.15;
+      color: #9e8c7c;
+    }
+
+    .mini-cell.matched {
+      background: rgba(245, 210, 122, 0.25);
+      border-color: var(--gold);
+      color: var(--cream);
+      font-weight: 700;
+    }
+
+    .mini-cell.win-line {
+      background: linear-gradient(135deg, #059669, #10b981);
+      border-color: #fff;
+      color: #fff;
+    }
+
+    @media (max-width: 860px) {
+      .lower-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .reels-frame { grid-template-columns: 1fr; }
+      .reel-slot { height: 140px; }
+      .slot-wrapper { padding-right: 0; }
+      .lever-assembly { display: none; }
+      .board-columns { gap: 0.25rem; }
+      .board-term { font-size: 0.6rem; padding: 0.3rem 0.15rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <canvas id="emberCanvas"></canvas>
+
+  <div class="page-wrap">
+    <!-- TOP HEADER -->
+    <div class="top-bar">
+      <div class="brand-title">🔥 CLIMATE ON THE PLATE • BINGO ARENA</div>
+      <div class="top-controls">
+        <button type="button" class="pill-btn" id="clueModeBtn" onclick="toggleClueMode()">
+          🕵️ Clue Mode: OFF
+        </button>
+        <button type="button" class="pill-btn active" id="soundBtn" onclick="toggleSound()">
+          🔊 Sound: ON
+        </button>
+        <button type="button" class="pill-btn" onclick="resetGame()">
+          🔄 Reset Game
+        </button>
+      </div>
+    </div>
+
+    <!-- 2-REEL SLOT MACHINE -->
+    <div class="machine-stage">
+      <div class="slot-wrapper">
+        <!-- Interactive Lever -->
+        <div class="lever-assembly" id="leverBtn" title="Pull Lever to Spin!" onclick="spinMachine()">
+          <div class="lever-mount"></div>
+          <div class="lever-arm">
+            <div class="lever-knob"></div>
+          </div>
+        </div>
+
+        <!-- Arch Marquee -->
+        <div class="marquee-arch">
+          <div class="marquee-inner">
+            <div class="marquee-title">CLIMATE BINGO</div>
+            <div class="marquee-sub">Guess It • Mark It • Win It</div>
+          </div>
+          <div class="bulb-strip">
+            <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+            <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+            <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+          </div>
+        </div>
+
+        <!-- Cabinet Body -->
+        <div class="cabinet-body">
+          <div class="reels-frame">
+            <div class="pointer-left"></div>
+            <div class="pointer-right"></div>
+
+            <!-- REEL 1: LETTER BALL -->
+            <div class="reel-slot" id="reel1">
+              <div class="reel-content">
+                <div class="bingo-ball ball-idle" id="ballDisplay">?</div>
+              </div>
+            </div>
+
+            <!-- REEL 2: FOOD SAFETY TERM -->
+            <div class="reel-slot" id="reel2">
+              <div class="reel-content">
+                <div class="word-label" id="wordLabel">READY TO DRAW</div>
+                <div class="word-text" id="wordDisplay">Pull Lever or Spin!</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LED CLUE / COUNTER SCREEN -->
+          <div class="led-console">
+            <div class="led-header">
+              <span id="ledStatus">CLUE / DEFINITION</span>
+              <span id="ledCounter">CALLED: 00 / 40</span>
+            </div>
+            <div class="led-clue-text" id="ledClue">
+              Press SPIN (or Spacebar) to draw the first Climate Bingo ball!
+            </div>
+          </div>
+
+          <!-- CONTROL BUTTONS -->
+          <div class="deck-buttons">
+            <button type="button" class="btn-spin" id="spinBtn" onclick="spinMachine()">
+              🎰 Spin & Draw Ball
+            </button>
+            <button type="button" class="btn-reveal" id="revealBtn" onclick="revealHiddenWord()">
+              ✨ Reveal Word
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOWER SECTION: 40-TERM TRACKER + COTP-XXXX VERIFIER -->
+    <div class="lower-grid">
+
+      <!-- 40-TERM MASTER BOARD -->
+      <section class="panel-card">
+        <div class="panel-title">
+          <span>📋 Master Board (40 Terms)</span>
+          <span id="boardCount" style="font-size: 0.78rem; color: var(--cream);">0 / 40</span>
+        </div>
+        <div class="board-columns" id="masterBoard"></div>
+      </section>
+
+      <!-- LIVE COTP-XXXX CARD VERIFIER -->
+      <section class="panel-card">
+        <div class="panel-title">
+          <span>🏆 "NO TO PAX SILICA" Verifier</span>
+        </div>
+        <p style="font-size: 0.78rem; color: #c2b2a3; margin-bottom: 0.75rem;">
+          Enter a winner's Ticket ID (e.g., <strong>COTP-0001</strong> or just <strong>1</strong>) to check their card against called terms.
+        </p>
+
+        <form class="verify-form" onsubmit="verifyTicketCard(event)">
+          <input type="text" id="verifyInput" class="verify-input" placeholder="COTP-0001" required />
+          <button type="submit" class="btn-verify" id="verifyBtn">Check Card</button>
+        </form>
+
+        <div id="verifyBanner" class="verify-status-banner"></div>
+        <div id="verifyMeta" style="font-size: 0.8rem; color: var(--cream); margin-bottom: 0.6rem; display: none;"></div>
+        <div id="miniBingoGrid" class="mini-bingo-grid"></div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW (Same URL as index.html):
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby1CrsuN2Fbzqo4t1nTGkW9v3zy_ZJp-QYaoez-2WuNV5NQhkEL0ShgDOSnkowL0OvEWQ/exec";
+
+    // ========================================================
+    // 1. ALL 40 TERMS & EXACT DEFINITIONS FROM YOUR PDF
+    // ========================================================
+    const BINGO_POOL = [
+      // B (8)
+      { letter: "B", word: "Flooding", def: "An overflow of water that can contaminate food and water supplies." },
+      { letter: "B", word: "Sanitation", def: "The practice of keeping surroundings clean to prevent contamination." },
+      { letter: "B", word: "Food Poisoning", def: "A condition caused by eating contaminated food." },
+      { letter: "B", word: "Proper Cooking", def: "Using enough heat to kill harmful microorganisms in food." },
+      { letter: "B", word: "Greenhouse Gases", def: "Gases that trap heat in Earth's atmosphere." },
+      { letter: "B", word: "Cross Contamination", def: "The transfer of harmful microorganisms from one food or surface to another." },
+      { letter: "B", word: "Heatwave", def: "A prolonged period of unusually hot weather." },
+      { letter: "B", word: "Foodborne Illness", def: "An illness caused by consuming contaminated food." },
+
+      // I (8)
+      { letter: "I", word: "Temperature Danger Zone", def: "A temperature range where harmful bacteria can multiply rapidly." },
+      { letter: "I", word: "E. coli", def: "A bacterium that can cause foodborne illness through contaminated food or water." },
+      { letter: "I", word: "Rising Temperature", def: "The continuous increase in temperature over time." },
+      { letter: "I", word: "Water Contamination", def: "The presence of harmful substances or microorganisms in water." },
+      { letter: "I", word: "Freezing", def: "Preserving food by keeping it at very low temperatures." },
+      { letter: "I", word: "Cold Chain", def: "A system that keeps perishable food cold during storage and transportation." },
+      { letter: "I", word: "Algal blooms", def: "Rapid increases in algae populations in warming waters that can produce potent marine biotoxins, contaminating shellfish and seafood." },
+      { letter: "I", word: "Humidity", def: "The concentration of water vapor in the air, which accelerates mold growth and compromises dry food storage when elevated by changing weather patterns." },
+
+      // N (8)
+      { letter: "N", word: "Pathogens", def: "Biological agents, such as bacteria, viruses, and fungi, that cause disease in their hosts." },
+      { letter: "N", word: "Expiration date", def: "The date up to which food is guaranteed to retain its safety and optimal quality under proper storage." },
+      { letter: "N", word: "Food waste", def: "Edible food that is discarded, lost, or spoiled along the food supply chain." },
+      { letter: "N", word: "Food hygiene", def: "The conditions and practices necessary to ensure food safety from farm to fork." },
+      { letter: "N", word: "Soil erosion", def: "The wearing away of topsoil by heavy rains or drought-induced winds, which can wash agricultural chemicals and pathogens into nearby waterways and crops." },
+      { letter: "N", word: "HACCP", def: "A systematic preventive approach to food safety (Hazard Analysis and Critical Control Points) that must continuously adapt to new biological and environmental hazards driven by climate change." },
+      { letter: "N", word: "Power outage", def: "Loss of electrical power caused by severe storms or heatwaves, which quickly compromises refrigeration and freezer safety for perishable foods." },
+      { letter: "N", word: "Shelf life", def: "The length of time a food product remains safe and suitable for consumption, which can shorten rapidly under fluctuating storage temperatures." },
+
+      // G (8)
+      { letter: "G", word: "Refrigeration", def: "The method of cooling food to low temperatures to slow down microbial growth and extend shelf life." },
+      { letter: "G", word: "Extreme weather", def: "Severe and unpredictable weather events intensified by climate change that disrupt food production and transport." },
+      { letter: "G", word: "Food preservation", def: "Methods and techniques used to prevent food from spoiling and increase its storage longevity." },
+      { letter: "G", word: "Drought", def: "An extended period of deficient rainfall that severely impacts crop yields, livestock, and agricultural water supply." },
+      { letter: "G", word: "Pest infestation", def: "A heavy presence of destructive insects or animals that damage crops and contaminate stored food." },
+      { letter: "G", word: "Water scarcity", def: "The lack of sufficient available freshwater resources, which can force agricultural and food processing facilities to rely on lower-quality, potentially contaminated water." },
+      { letter: "G", word: "Allergens", def: "Specific proteins in foods such as nuts, dairy, or shellfish that can trigger severe, potentially life-threatening immune reactions in sensitive individuals." },
+      { letter: "G", word: "Botulism", def: "A rare but severe paralytic illness caused by a potent nerve toxin produced by Clostridium botulinum bacteria, often linked to improperly canned foods." },
+
+      // O (8)
+      { letter: "O", word: "Handwashing", def: "The vital hygiene practice of cleaning hands thoroughly with soap and water to prevent cross-contamination." },
+      { letter: "O", word: "Bacterial growth", def: "The multiplication and division of bacteria that can cause food spoilage and foodborne diseases." },
+      { letter: "O", word: "Climate change", def: "Long-term shifts in weather and temperature patterns that pose systemic risks to global food security and safety." },
+      { letter: "O", word: "Moisture", def: "The presence of water vapor or liquid that, when unregulated, creates an ideal environment for mold and bacterial growth." },
+      { letter: "O", word: "Salmonella", def: "A prominent genus of bacteria responsible for causing salmonellosis, a widespread foodborne infection." },
+      { letter: "O", word: "Pasteurization", def: "A mild heat-treatment process used on liquids like milk and juice to destroy pathogenic microorganisms and extend shelf life." },
+      { letter: "O", word: "GMP", def: "A system of operational guidelines and standards ensuring that food products are consistently produced and controlled according to quality and safety benchmarks." },
+      { letter: "O", word: "Food sovereignty", def: "The right of peoples and communities to healthy, culturally appropriate food produced through ecologically sound and sustainable methods, as well as their right to define their own food and agriculture systems." }
+    ];
+
+    // ========================================================
+    // 2. GAME STATE & PERSISTENCE
+    // ========================================================
+    const STORAGE_KEY = "cotp_bingo_caller_state_v1";
+    let calledWords = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    let clueMode = false;
+    let soundEnabled = true;
+    let isSpinning = false;
+    let pendingReveal = null;
+
+    // Web Audio API Sound Generator (zero external audio files needed)
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playTone(freq, duration, type = "triangle", volume = 0.12) {
+      if (!soundEnabled) return;
+      const ctx = getAudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(volume, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    }
+
+    function playLockChime(isFinal = false) {
+      if (!soundEnabled) return;
+      if (!isFinal) {
+        playTone(587.33, 0.16, "sine", 0.18); // D5
+      } else {
+        playTone(783.99, 0.18, "sine", 0.2);  // G5
+        setTimeout(() => playTone(1046.5, 0.35, "sine", 0.22), 110); // C6
+      }
+    }
+
+    // ========================================================
+    // 3. SLOT MACHINE SPIN & CLUE MODE LOGIC
+    // ========================================================
+    const reel1 = document.getElementById("reel1");
+    const reel2 = document.getElementById("reel2");
+    const ballDisplay = document.getElementById("ballDisplay");
+    const wordLabel = document.getElementById("wordLabel");
+    const wordDisplay = document.getElementById("wordDisplay");
+    const ledClue = document.getElementById("ledClue");
+    const ledCounter = document.getElementById("ledCounter");
+    const spinBtn = document.getElementById("spinBtn");
+    const revealBtn = document.getElementById("revealBtn");
+    const leverBtn = document.getElementById("leverBtn");
+
+    function spinMachine() {
+      if (isSpinning) return;
+
+      // If previous draw was hidden in Clue Mode and not yet revealed, reveal it automatically first
+      if (pendingReveal) {
+        revealHiddenWord();
+      }
+
+      const remaining = BINGO_POOL.filter(item => !calledWords.includes(item.word));
+      if (remaining.length === 0) {
+        ledClue.textContent = "All 40 terms have been called! Click 'Reset Game' to play another round.";
+        return;
+      }
+
+      isSpinning = true;
+      spinBtn.disabled = true;
+      revealBtn.style.display = "none";
+
+      // Animate Pull Lever
+      leverBtn.classList.add("pulled");
+      setTimeout(() => leverBtn.classList.remove("pulled"), 420);
+
+      // Pick random uncalled item
+      const picked = remaining[Math.floor(Math.random() * remaining.length)];
+
+      // Start spinning both reels
+      reel1.classList.remove("locked");
+      reel2.classList.remove("locked");
+      reel1.classList.add("spinning");
+      reel2.classList.add("spinning");
+      wordDisplay.classList.remove("hidden-clue");
+      wordLabel.textContent = "SPINNING...";
+      ledClue.textContent = "Drawing next Climate Bingo ball...";
+
+      const letters = ["B", "I", "N", "G", "O"];
+      let tickCount = 0;
+
+      const spinInterval = setInterval(() => {
+        const randL = letters[Math.floor(Math.random() * letters.length)];
+        const randItem = BINGO_POOL[Math.floor(Math.random() * BINGO_POOL.length)];
+        ballDisplay.className = `bingo-ball ball-${randL}`;
+        ballDisplay.textContent = randL;
+        wordDisplay.textContent = randItem.word;
+        playTone(220 + (tickCount % 4) * 35, 0.045, "square", 0.04);
+        tickCount++;
+      }, 75);
+
+      // Lock Reel 1 (Letter Ball) at 1.1s
+      setTimeout(() => {
+        reel1.classList.remove("spinning");
+        reel1.classList.add("locked");
+        ballDisplay.className = `bingo-ball ball-${picked.letter}`;
+        ballDisplay.textContent = picked.letter;
+        playLockChime(false);
+      }, 1100);
+
+      // Lock Reel 2 (Term or ???) at 1.85s
+      setTimeout(() => {
+        clearInterval(spinInterval);
+        reel2.classList.remove("spinning");
+        reel2.classList.add("locked");
+        playLockChime(true);
+
+        if (clueMode) {
+          pendingReveal = picked;
+          wordLabel.textContent = `UNDER LETTER ${picked.letter} • GUESS IT!`;
+          wordDisplay.textContent = "? ? ?";
+          wordDisplay.classList.add("hidden-clue");
+          ledClue.textContent = `CLUE: ${picked.def}`;
+          revealBtn.style.display = "inline-block";
+        } else {
+          finalizeCall(picked);
+        }
+
+        isSpinning = false;
+        spinBtn.disabled = false;
+      }, 1850);
+    }
+
+    function revealHiddenWord() {
+      if (!pendingReveal) return;
+      const picked = pendingReveal;
+      pendingReveal = null;
+      revealBtn.style.display = "none";
+      wordDisplay.classList.remove("hidden-clue");
+      reel2.classList.remove("locked");
+      void reel2.offsetWidth; // trigger reflow for snap animation
+      reel2.classList.add("locked");
+      playLockChime(true);
+      finalizeCall(picked);
+    }
+
+    function finalizeCall(picked) {
+      wordLabel.textContent = `UNDER LETTER ${picked.letter}`;
+      wordDisplay.textContent = picked.word;
+      ledClue.textContent = `${picked.word}: ${picked.def}`;
+
+      if (!calledWords.includes(picked.word)) {
+        calledWords.push(picked.word);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(calledWords));
+      }
+      renderMasterBoard();
+    }
+
+    function toggleClueMode() {
+      clueMode = !clueMode;
+      const btn = document.getElementById("clueModeBtn");
+      btn.classList.toggle("active", clueMode);
+      btn.textContent = clueMode ? "🕵️ Clue Mode: ON" : "🕵️ Clue Mode: OFF";
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById("soundBtn");
+      btn.classList.toggle("active", soundEnabled);
+      btn.textContent = soundEnabled ? "🔊 Sound: ON" : "🔇 Sound: OFF";
+    }
+
+    function resetGame() {
+      if (!confirm("Reset the Climate Bingo game and clear all called terms?")) return;
+      calledWords = [];
+      pendingReveal = null;
+      localStorage.removeItem(STORAGE_KEY);
+      revealBtn.style.display = "none";
+      ballDisplay.className = "bingo-ball ball-idle";
+      ballDisplay.textContent = "?";
+      wordLabel.textContent = "READY TO DRAW";
+      wordDisplay.classList.remove("hidden-clue");
+      wordDisplay.textContent = "Pull Lever or Spin!";
+      ledClue.textContent = "Press SPIN (or Spacebar) to draw the first Climate Bingo ball!";
+      renderMasterBoard();
+    }
+
+    // Allow Spacebar to spin (when not typing in the Verifier input)
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && document.activeElement.tagName !== "INPUT") {
+        e.preventDefault();
+        spinMachine();
+      }
+    });
+
+    // ========================================================
+    // 4. MASTER 40-TERM BOARD RENDERER
+    // ========================================================
+    function renderMasterBoard() {
+      const board = document.getElementById("masterBoard");
+      board.innerHTML = "";
+      const letters = ["B", "I", "N", "G", "O"];
+      const latestWord = calledWords[calledWords.length - 1] || "";
+
+      letters.forEach(letter => {
+        const colDiv = document.createElement("div");
+        const hdr = document.createElement("div");
+        hdr.className = `board-col-header hdr-${letter}`;
+        hdr.textContent = letter;
+        colDiv.appendChild(hdr);
+
+        BINGO_POOL.filter(i => i.letter === letter).forEach(item => {
+          const termDiv = document.createElement("div");
+          termDiv.className = "board-term";
+          if (calledWords.includes(item.word)) termDiv.classList.add("called");
+          if (item.word === latestWord) termDiv.classList.add("latest");
+          termDiv.textContent = item.word;
+          colDiv.appendChild(termDiv);
+        });
+
+        board.appendChild(colDiv);
+      });
+
+      const countStr = String(calledWords.length).padStart(2, "0");
+      ledCounter.textContent = `CALLED: ${countStr} / 40`;
+      document.getElementById("boardCount").textContent = `${calledWords.length} / 40`;
+    }
+
+    // ========================================================
+    // 5. LIVE COTP-XXXX CARD VERIFIER ("NO TO PAX SILICA")
+    // ========================================================
+    async function verifyTicketCard(e) {
+      e.preventDefault();
+      const input = document.getElementById("verifyInput");
+      const btn = document.getElementById("verifyBtn");
+      const banner = document.getElementById("verifyBanner");
+      const meta = document.getElementById("verifyMeta");
+      const grid = document.getElementById("miniBingoGrid");
+
+      const ticket = input.value.trim();
+      if (!ticket) return;
+
+      if (GAS_WEB_APP_URL === "YOUR_GAS_WEB_APP_URL_HERE") {
+        banner.className = "verify-status-banner error";
+        banner.textContent = "Set your GAS_WEB_APP_URL inside bingo-caller.html first.";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Checking...";
+      banner.className = "verify-status-banner";
+      meta.style.display = "none";
+      grid.classList.remove("visible");
+
+      try {
+        const url = `${GAS_WEB_APP_URL}?action=verifyCard&ticket=${encodeURIComponent(ticket)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.status !== "success") {
+          throw new Error(data.message || "Ticket not found.");
+        }
+
+        meta.style.display = "block";
+        meta.innerHTML = `<strong>${data.ticketNo}</strong> • ${data.fullName} (${data.section})`;
+
+        renderVerifiedMiniCard(data.card);
+      } catch (err) {
+        banner.className = "verify-status-banner error";
+        banner.textContent = err.message;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Check Card";
+      }
+    }
+
+    function renderVerifiedMiniCard(card) {
+      const grid = document.getElementById("miniBingoGrid");
+      const banner = document.getElementById("verifyBanner");
+      grid.innerHTML = "";
+
+      const letters = ["B", "I", "N", "G", "O"];
+      letters.forEach(l => {
+        const h = document.createElement("div");
+        h.className = "mini-head";
+        h.textContent = l;
+        grid.appendChild(h);
+      });
+
+      // Build 5x5 boolean matrix of matched squares
+      const matched = Array.from({ length: 5 }, () => Array(5).fill(false));
+      const cells = Array.from({ length: 5 }, () => Array(5).fill(null));
+
+      for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+          const term = card[letters[c]][r];
+          const isFree = (c === 2 && r === 2);
+          const isHit = isFree || calledWords.some(w => w.toLowerCase() === String(term).toLowerCase());
+          matched[r][c] = isHit;
+
+          const cell = document.createElement("div");
+          cell.className = "mini-cell" + (isHit ? " matched" : "");
+          cell.textContent = term;
+          grid.appendChild(cell);
+          cells[r][c] = cell;
+        }
+      }
+
+      // Auto-check all 12 standard straight lines (5 rows, 5 cols, 2 diagonals)
+      const winningCoords = new Set();
+      for (let r = 0; r < 5; r++) {
+        if (matched[r].every(Boolean)) {
+          for (let c = 0; c < 5; c++) winningCoords.add(`${r},${c}`);
+        }
+      }
+      for (let c = 0; c < 5; c++) {
+        if ([0,1,2,3,4].every(r => matched[r][c])) {
+          for (let r = 0; r < 5; r++) winningCoords.add(`${r},${c}`);
+        }
+      }
+      if ([0,1,2,3,4].every(i => matched[i][i])) {
+        for (let i = 0; i < 5; i++) winningCoords.add(`${i},${i}`);
+      }
+      if ([0,1,2,3,4].every(i => matched[i][4 - i])) {
+        for (let i = 0; i < 5; i++) winningCoords.add(`${i},${4 - i}`);
+      }
+
+      winningCoords.forEach(coord => {
+        const [r, c] = coord.split(",").map(Number);
+        cells[r][c].classList.add("win-line");
+      });
+
+      grid.classList.add("visible");
+
+      if (winningCoords.size > 0) {
+        banner.className = "verify-status-banner win";
+        banner.textContent = "✅ VALID BINGO LINE VERIFIED! WINNER!";
+      } else {
+        banner.className = "verify-status-banner no-win";
+        banner.textContent = "⚠️ No straight winning line yet (highlighted matched squares below).";
+      }
+    }
+
+    // ========================================================
+    // 6. AMBIENT EMBER BACKGROUND
+    // ========================================================
+    (function initEmbers() {
+      const canvas = document.getElementById("emberCanvas");
+      const ctx = canvas.getContext("2d");
+      let w, h, embers = [];
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+        embers = Array.from({ length: 45 }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 2.2 + 0.8,
+          vy: Math.random() * 0.9 + 0.3,
+          a: Math.random() * 0.6 + 0.2
+        }));
+      }
+
+      function loop() {
+        ctx.clearRect(0, 0, w, h);
+        embers.forEach(e => {
+          e.y -= e.vy;
+          if (e.y < -10) { e.y = h + 10; e.x = Math.random() * w; }
+          ctx.fillStyle = `rgba(245, 166, 35, ${e.a})`;
+          ctx.beginPath();
+          ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        requestAnimationFrame(loop);
+      }
+
+      window.addEventListener("resize", resize);
+      resize();
+      loop();
+    })();
+
+    // Initialize Board on Load
+    renderMasterBoard();
+  </script>
+</body>
+</html>
