@@ -652,13 +652,16 @@
       border-color: #f87171;
     }
 
-    /* SUBMIT BUTTON */
+    /* ANIMATED SUBMIT BUTTON */
     .btn-submit {
+      position: relative;
+      overflow: hidden;
       width: 100%;
-      padding: 1rem 1.5rem;
-      border: 1px solid rgba(254, 240, 199, 0.25);
-      border-radius: 10px;
-      background: linear-gradient(135deg, #a62510 0%, #e07a16 100%);
+      padding: 1.05rem 1.5rem;
+      border: 1px solid rgba(245, 210, 122, 0.45);
+      border-radius: 12px;
+      background: linear-gradient(135deg, #991b0c 0%, #c94a12 50%, #e58317 100%);
+      background-size: 200% 200%;
       color: #fff;
       font-family: 'Cinzel', serif;
       font-size: 1.05rem;
@@ -666,19 +669,115 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       cursor: pointer;
-      box-shadow: 0 8px 28px rgba(217, 107, 22, 0.4);
-      transition: transform 0.15s, filter 0.2s, box-shadow 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      animation: emberGlow 3.2s ease-in-out infinite;
+      transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.25s ease,
+                  border-color 0.25s ease,
+                  background-position 0.4s ease;
+    }
+
+    /* Diagonal gold sheen sweep */
+    .btn-submit::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(254, 240, 199, 0.28) 50%,
+        transparent 100%
+      );
+      transform: skewX(-22deg);
+      animation: sheenSweep 4.5s ease-in-out infinite;
+      pointer-events: none;
     }
 
     .btn-submit:hover:not(:disabled) {
-      filter: brightness(1.12);
+      background-position: 100% 50%;
+      border-color: var(--gold);
       transform: translateY(-2px);
-      box-shadow: 0 12px 35px rgba(245, 166, 35, 0.5);
+      box-shadow: 0 12px 34px rgba(229, 131, 23, 0.55), 0 0 18px rgba(245, 210, 122, 0.3);
     }
 
-    .btn-submit:disabled {
-      opacity: 0.65;
+    .btn-submit:active:not(:disabled) {
+      transform: translateY(1px) scale(0.985);
+      box-shadow: 0 4px 14px rgba(217, 107, 22, 0.4);
+    }
+
+    .btn-submit .btn-icon {
+      display: inline-block;
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .btn-submit:hover:not(:disabled) .btn-icon {
+      transform: translateX(5px) rotate(-10deg) scale(1.12);
+    }
+
+    /* Loading State & Spinner */
+    .btn-spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(254, 240, 199, 0.3);
+      border-top-color: var(--cream);
+      border-radius: 50%;
+      animation: btnSpin 0.75s linear infinite;
+      flex-shrink: 0;
+    }
+
+    .btn-submit.is-loading {
+      cursor: wait;
+      opacity: 0.92;
+      animation: loadingPulse 1.4s ease-in-out infinite;
+    }
+
+    .btn-submit.is-loading::before {
+      animation: sheenSweep 1.3s linear infinite;
+    }
+
+    .btn-submit.is-loading .btn-spinner {
+      display: inline-block;
+    }
+
+    .btn-submit.is-loading .btn-icon {
+      display: none;
+    }
+
+    .btn-submit:disabled:not(.is-loading) {
+      opacity: 0.6;
       cursor: not-allowed;
+    }
+
+    @keyframes emberGlow {
+      0%, 100% {
+        box-shadow: 0 6px 22px rgba(217, 107, 22, 0.35), 0 0 0 0 rgba(245, 210, 122, 0);
+      }
+      50% {
+        box-shadow: 0 8px 30px rgba(229, 131, 23, 0.55), 0 0 14px rgba(245, 210, 122, 0.22);
+      }
+    }
+
+    @keyframes sheenSweep {
+      0% { left: -75%; }
+      35%, 100% { left: 135%; }
+    }
+
+    @keyframes btnSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes loadingPulse {
+      0%, 100% { filter: brightness(0.95); }
+      50% { filter: brightness(1.1); }
     }
 
     /* THANK YOU SCREEN */
@@ -1002,7 +1101,9 @@
         <div id="errorBanner" class="error-banner"></div>
 
         <button type="submit" id="submitBtn" class="btn-submit">
-          Enter the Arena & Submit Registration 🏹
+          <span class="btn-spinner" aria-hidden="true"></span>
+          <span class="btn-text">Enter the Arena & Submit Registration</span>
+          <span class="btn-icon" aria-hidden="true">🏹</span>
         </button>
 
       </form>
@@ -1367,12 +1468,14 @@
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        showError("Your payment receipt exceeds the 5MB limit. Please upload a smaller image.");
+        showError("Your payment receipt exceeds the 5MB limit. Please upload a smaller file.");
         return;
       }
 
+      const btnText = submitBtn.querySelector(".btn-text");
       submitBtn.disabled = true;
-      submitBtn.textContent = "Uploading Receipt & Registering...";
+      submitBtn.classList.add("is-loading");
+      btnText.textContent = "Uploading Receipt & Entering Arena...";
 
       try {
         const base64Receipt = await fileToBase64(file);
@@ -1397,6 +1500,7 @@
           comments: document.getElementById("comments").value.trim()
         };
 
+        // Using text/plain avoids CORS preflight issues with Google Apps Script
         const response = await fetch(GAS_WEB_APP_URL, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -1415,7 +1519,8 @@
       } catch (err) {
         showError("Something went wrong: " + err.message);
         submitBtn.disabled = false;
-        submitBtn.textContent = "Enter the Arena & Submit Registration 🏹";
+        submitBtn.classList.remove("is-loading");
+        btnText.textContent = "Enter the Arena & Submit Registration";
       }
     });
 
