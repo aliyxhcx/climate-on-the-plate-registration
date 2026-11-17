@@ -801,15 +801,17 @@
 
   </div>
 
-  <!-- LIVE EMBER PARTICLE ANIMATION + FORM LOGIC -->
+  <!-- LIVE EMBER + MOCKINGJAY BIRDS + FORM LOGIC -->
   <script>
-    // ==========================================
-    // 1. LIVE "CATCHING FIRE" EMBER BACKGROUND
-    // ==========================================
-    (function initEmbers() {
+    // ========================================================
+    // 1. LIVE "CATCHING FIRE" EMBERS + RANDOM FLYING BIRDS
+    // ========================================================
+    (function initLiveArena() {
       const canvas = document.getElementById("emberCanvas");
       const ctx = canvas.getContext("2d");
-      let width, height, embers = [];
+      let width, height;
+      let embers = [];
+      let birds = [];
 
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const emberColors = [
@@ -823,8 +825,10 @@
         width = canvas.width = window.innerWidth;
         height = canvas.height = window.innerHeight;
         createEmbers();
+        createBirds();
       }
 
+      // --- EMBERS ---
       function createEmbers() {
         const count = prefersReducedMotion ? 18 : Math.min(Math.floor(width / 16), 85);
         embers = [];
@@ -849,9 +853,141 @@
         };
       }
 
+      // --- RANDOM FLYING MOCKINGJAY SILHOUETTES ---
+      function createBirds() {
+        const birdCount = prefersReducedMotion ? 2 : (width < 640 ? 3 : 6);
+        birds = [];
+        for (let i = 0; i < birdCount; i++) {
+          birds.push(spawnBird(true));
+        }
+      }
+
+      function spawnBird(initial = false) {
+        const dir = Math.random() < 0.5 ? 1 : -1; // Left-to-right or right-to-left
+        const scale = Math.random() * 0.65 + 0.45; // Depth variation (0.45 = distant, 1.1 = closer)
+        const baseSpeed = (Math.random() * 0.75 + 0.55) * (0.65 + scale * 0.5);
+
+        // Stagger off-screen start so birds enter organically at random intervals
+        const offscreenOffset = initial ? Math.random() * width : -(Math.random() * 320 + 60);
+        const startX = dir === 1
+          ? (initial ? offscreenOffset : offscreenOffset)
+          : (initial ? offscreenOffset : width - offscreenOffset);
+
+        return {
+          x: startX,
+          y: Math.random() * (height * 0.72) + height * 0.06, // Upper 78% of sky
+          dir: dir,
+          scale: scale,
+          vx: baseSpeed * dir,
+          vyBase: (Math.random() - 0.5) * 0.28, // Gentle climb or descent
+          swoopPhase: Math.random() * Math.PI * 2,
+          swoopFreq: Math.random() * 0.012 + 0.006,
+          flapPhase: Math.random() * Math.PI * 2,
+          flapSpeed: Math.random() * 0.07 + 0.08,
+          isGliding: Math.random() < 0.35,
+          modeTimer: Math.floor(Math.random() * 140 + 80),
+          alpha: 0.55 + scale * 0.32
+        };
+      }
+
+      function drawBird(b) {
+        const s = 14 * b.scale;
+        // Smooth wingbeat value (-1 to +1). When gliding, ease wings into a poised upward arch
+        const rawFlap = b.isGliding ? 0.22 : Math.sin(b.flapPhase);
+        const currentVy = b.vyBase + Math.cos(b.swoopPhase) * 0.22;
+        const pitch = Math.atan2(currentVy, Math.abs(b.vx)) * 0.65;
+
+        ctx.save();
+        ctx.translate(b.x, b.y);
+        ctx.scale(b.dir, 1);
+        ctx.rotate(pitch);
+
+        // Subtle warm ember under-glow from the wildfire below
+        ctx.shadowColor = `rgba(245, 130, 32, ${0.42 * b.scale})`;
+        ctx.shadowBlur = 9 * b.scale;
+        ctx.shadowOffsetY = 2 * b.scale;
+        ctx.fillStyle = `rgba(12, 5, 4, ${b.alpha})`;
+
+        // 1. Far Wing (slightly higher & ahead for 3D depth)
+        ctx.beginPath();
+        ctx.moveTo(0.2 * s, -0.1 * s);
+        ctx.quadraticCurveTo(
+          0.15 * s, (-0.18 - rawFlap * 0.75) * s,
+          (-0.55 - Math.abs(rawFlap) * 0.15) * s, (-0.25 - rawFlap * 0.95) * s
+        );
+        ctx.quadraticCurveTo(
+          -0.25 * s, (-0.05 - rawFlap * 0.35) * s,
+          -0.25 * s, 0.02 * s
+        );
+        ctx.closePath();
+        ctx.fill();
+
+        // 2. Sleek Mockingjay Body, Head, Beak & Notched Tail
+        ctx.beginPath();
+        ctx.moveTo(-0.85 * s, 0.02 * s);
+        // Fanned tail feathers
+        ctx.lineTo(-1.55 * s, -0.22 * s);
+        ctx.lineTo(-1.38 * s, 0.02 * s);
+        ctx.lineTo(-1.58 * s, 0.2 * s);
+        ctx.lineTo(-0.8 * s, 0.1 * s);
+        // Belly to head & sharp beak
+        ctx.quadraticCurveTo(0, 0.22 * s, 0.78 * s, 0.02 * s);
+        ctx.lineTo(1.22 * s, -0.09 * s);
+        ctx.lineTo(0.8 * s, -0.22 * s);
+        ctx.quadraticCurveTo(0.2 * s, -0.26 * s, -0.85 * s, 0.02 * s);
+        ctx.closePath();
+        ctx.fill();
+
+        // 3. Near Wing (swept & expressive)
+        ctx.beginPath();
+        ctx.moveTo(0.18 * s, -0.02 * s);
+        ctx.quadraticCurveTo(
+          0.02 * s, (-0.12 - rawFlap * 0.85) * s,
+          (-0.78 - Math.abs(rawFlap) * 0.22) * s, (-0.16 - rawFlap * 1.18) * s
+        );
+        ctx.quadraticCurveTo(
+          -0.42 * s, (0.04 - rawFlap * 0.4) * s,
+          -0.38 * s, 0.08 * s
+        );
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+      }
+
       function animate() {
         ctx.clearRect(0, 0, width, height);
 
+        // Update & draw birds in the smoky sky behind foreground embers
+        for (let i = 0; i < birds.length; i++) {
+          const b = birds[i];
+
+          if (!prefersReducedMotion) {
+            b.swoopPhase += b.swoopFreq;
+            b.x += b.vx;
+            b.y += b.vyBase + Math.cos(b.swoopPhase) * 0.22;
+
+            b.modeTimer--;
+            if (b.modeTimer <= 0) {
+              b.isGliding = !b.isGliding;
+              b.modeTimer = b.isGliding
+                ? Math.floor(Math.random() * 110 + 70)
+                : Math.floor(Math.random() * 90 + 50);
+            }
+            if (!b.isGliding) {
+              b.flapPhase += b.flapSpeed;
+            }
+          }
+
+          drawBird(b);
+
+          // Respawn when flown well past screen bounds
+          if ((b.dir === 1 && b.x > width + 120) || (b.dir === -1 && b.x < -120) || b.y < -80 || b.y > height + 80) {
+            birds[i] = spawnBird(false);
+          }
+        }
+
+        // Update & draw rising embers
         for (let i = 0; i < embers.length; i++) {
           const e = embers[i];
 
@@ -861,7 +997,6 @@
             e.x += Math.sin(e.phase) * e.swayAmp;
           }
 
-          // Fade out smoothly near the top
           const heightRatio = e.y / height;
           const currentAlpha = heightRatio < 0.25 ? e.alpha * (heightRatio / 0.25) : e.alpha;
 
