@@ -437,6 +437,55 @@
       color: var(--gold);
     }
 
+    .gcash-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      background: rgba(0, 125, 254, 0.12);
+      border: 1px solid rgba(96, 165, 250, 0.35);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      margin-top: 0.85rem;
+    }
+
+    .gcash-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .gcash-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #60a5fa;
+    }
+
+    .gcash-number {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--cream);
+    }
+
+    .btn-copy-gcash {
+      background: rgba(245, 210, 122, 0.14);
+      border: 1px solid rgba(245, 210, 122, 0.4);
+      color: var(--gold);
+      border-radius: 8px;
+      padding: 0.42rem 0.85rem;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-copy-gcash:hover {
+      background: rgba(245, 210, 122, 0.25);
+    }
+
     /* CUSTOM FILE UPLOAD DROPZONE */
     .file-dropzone {
       position: relative;
@@ -841,10 +890,14 @@
             </p>
 
             <!-- TODO: Fill in your actual account numbers and names below -->
-            <div class="payment-channels">
-              <div class="channel-item"><span><strong>GCash:</strong></span> <span>09XX-XXX-XXXX (Account Name)</span></div>
-              <div class="channel-item"><span><strong>Maribank:</strong></span> <span>XXXX-XXXX-XXXX (Account Name)</span></div>
-              <div class="channel-item"><span><strong>Landbank:</strong></span> <span>XXXX-XXXX-XX (Account Name)</span></div>
+            <div class="gcash-box">
+              <div class="gcash-info">
+                <span class="gcash-label">Official Payment Channel • GCash Only</span>
+                <span class="gcash-number">09677924913 | L***** Q******** C*****</span>
+              </div>
+              <button type="button" class="btn-copy-gcash" id="copyGcashBtn" onclick="copyGcash()">
+                Copy Number
+              </button>
             </div>
           </div>
 
@@ -867,9 +920,9 @@
 
             <div>
               <label class="field-label" for="eWallet">
-                E-wallet / Bank Used <span class="required">*</span>
+                Mode of Payment <span class="required">*</span>
               </label>
-              <input type="text" id="eWallet" placeholder="e.g., GCash, Maribank, LBP, BPI" required />
+              <input type="text" id="eWallet" value="GCash" readonly style="color: var(--gold); font-weight: 600; cursor: default;" required />
             </div>
 
             <div>
@@ -1369,6 +1422,16 @@
     function showError(msg) {
       errorBanner.textContent = msg;
       errorBanner.style.display = "block";
+    }
+
+    function copyGcash() {
+      const btn = document.getElementById("copyGcashBtn");
+      navigator.clipboard.writeText("09677924913").then(() => {
+        btn.textContent = "Copied!";
+        setTimeout(() => {
+          btn.textContent = "Copy Number";
+        }, 2000);
+      });
     }
   </script>
 </body>
