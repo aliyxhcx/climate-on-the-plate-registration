@@ -403,6 +403,44 @@
       margin-top: 0.2rem;
     }
 
+    .seat-badge {
+      display: inline-block;
+      margin-top: 0.45rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      background: rgba(245, 210, 122, 0.14);
+      border: 1px solid rgba(245, 210, 122, 0.35);
+      color: var(--cream);
+      width: fit-content;
+    }
+
+    .seat-badge.low {
+      background: rgba(220, 38, 38, 0.24);
+      border-color: #f87171;
+      color: #fecaca;
+      animation: urgencyPulse 1.6s ease-in-out infinite;
+    }
+
+    .seat-badge.full {
+      background: rgba(82, 82, 91, 0.35);
+      border-color: #71717a;
+      color: #d4d4d8;
+    }
+
+    .mode-card.sold-out {
+      opacity: 0.55;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+    }
+
+    @keyframes urgencyPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.35); }
+      50% { box-shadow: 0 0 10px 1px rgba(248, 113, 113, 0.45); }
+    }
+
     /* PAYMENT INFO BOX */
     .payment-details-box {
       background: rgba(255, 255, 255, 0.035);
@@ -1005,14 +1043,16 @@
               <label class="field-label">Attendance Mode <span class="required">*</span></label>
               <div class="mode-options">
                 <label class="mode-card selected" id="modeOnsiteCard">
-                  <input type="radio" name="attendanceMode" value="On-site (₱80.00)" checked />
+                  <input type="radio" name="attendanceMode" id="radioOnsite" value="On-site (₱80.00)" checked />
                   <span class="mode-title">🏛️ On-site Participant</span>
                   <span class="mode-price">₱80.00 (Bulwagang Bonifacio)</span>
+                  <span class="seat-badge" id="onsiteSeatBadge">Checking seats...</span>
                 </label>
                 <label class="mode-card" id="modeZoomCard">
-                  <input type="radio" name="attendanceMode" value="Zoom (₱40.00)" />
+                  <input type="radio" name="attendanceMode" id="radioZoom" value="Zoom (₱40.00)" />
                   <span class="mode-title">💻 Zoom Participant</span>
                   <span class="mode-price">₱40.00 (Online)</span>
+                  <span class="seat-badge" id="zoomSeatBadge">Checking slots...</span>
                 </label>
               </div>
             </div>
@@ -1369,6 +1409,81 @@
         zoomCard.classList.toggle("selected", radio.value.includes("Zoom") && radio.checked);
       });
     });
+
+    // Update Amount Sent placeholder when toggling mode
+    const amountSentInput = document.getElementById("amountSent");
+    modeRadios.forEach(radio => {
+      radio.addEventListener("change", () => {
+        if (radio.checked) {
+          amountSentInput.placeholder = radio.value.includes("On-site") ? "Php 80.00" : "Php 40.00";
+        }
+      });
+    });
+
+    // Fetch live verified seat counts from GAS
+    async function loadSeatAvailability() {
+      const onsiteBadge = document.getElementById("onsiteSeatBadge");
+      const zoomBadge = document.getElementById("zoomSeatBadge");
+      const radioOnsite = document.getElementById("radioOnsite");
+      const radioZoom = document.getElementById("radioZoom");
+
+      if (GAS_WEB_APP_URL === "YOUR_GAS_WEB_APP_URL_HERE") return;
+
+      try {
+        const res = await fetch(`${GAS_WEB_APP_URL}?action=getSeats`);
+        const data = await res.json();
+        if (data.status !== "success" || !data.seats) return;
+
+        const { onsiteRemaining, onsiteLimit, zoomRemaining, zoomLimit } = data.seats;
+
+        // Format On-site badge
+        updateSeatBadge(onsiteBadge, onsiteRemaining, onsiteLimit, "seats");
+        if (onsiteRemaining <= 0) {
+          radioOnsite.disabled = true;
+          radioOnsite.checked = false;
+          onsiteCard.classList.add("sold-out");
+          onsiteCard.classList.remove("selected");
+          if (zoomRemaining > 0) {
+            radioZoom.checked = true;
+            zoomCard.classList.add("selected");
+            amountSentInput.placeholder = "Php 40.00";
+          }
+        }
+
+        // Format Zoom badge
+        updateSeatBadge(zoomBadge, zoomRemaining, zoomLimit, "slots");
+        if (zoomRemaining <= 0) {
+          radioZoom.disabled = true;
+          radioZoom.checked = false;
+          zoomCard.classList.add("sold-out");
+          zoomCard.classList.remove("selected");
+        }
+
+        // Disable registration if both are completely full
+        if (onsiteRemaining <= 0 && zoomRemaining <= 0) {
+          submitBtn.disabled = true;
+          submitBtn.querySelector(".btn-text").textContent = "All Registration Slots Are Full";
+        }
+      } catch (err) {
+        onsiteBadge.textContent = "60 seats total";
+        zoomBadge.textContent = "30 slots total";
+      }
+    }
+
+    function updateSeatBadge(el, remaining, limit, unit) {
+      el.classList.remove("low", "full");
+      if (remaining <= 0) {
+        el.classList.add("full");
+        el.textContent = `🚫 FULL (0 / ${limit} ${unit} left)`;
+      } else if (remaining <= 10) {
+        el.classList.add("low");
+        el.textContent = `⚠️ Hurry! Only ${remaining} of ${limit} ${unit} left`;
+      } else {
+        el.textContent = `🔥 ${remaining} / ${limit} ${unit} available`;
+      }
+    }
+
+    loadSeatAvailability();
 
     // ==========================================
     // CUSTOM FILE DROPZONE & LIVE PREVIEW
