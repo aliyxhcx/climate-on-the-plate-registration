@@ -456,6 +456,32 @@
       color: var(--text-muted);
     }
 
+    .inclusions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin: 0.85rem 0;
+    }
+
+    .inclusion-box {
+      background: rgba(12, 7, 5, 0.55);
+      border: 1px solid rgba(245, 210, 122, 0.2);
+      border-radius: 8px;
+      padding: 0.75rem 0.9rem;
+    }
+
+    .inclusion-box strong {
+      display: block;
+      color: var(--gold);
+      font-size: 0.84rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .inclusion-box ul {
+      margin: 0 0 0 1.1rem;
+      font-size: 0.82rem;
+    }
+
     .payment-channels {
       display: grid;
       gap: 0.5rem;
@@ -1013,20 +1039,35 @@
             <p>
               The <strong>Climate on the Plate: Food Safety Challenges in a Changing World</strong> has a
               registration fee of <span class="highlight">₱60.00 for on-site participants</span> and
-              <span class="highlight">₱30.00 for FB Live participants</span>.
-            </p>
-            <p style="margin-top: 0.6rem;"><strong>Inclusions of the Registration Fee:</strong></p>
-            <ul>
-              <li>Loot Bag (On-site Participants)</li>
-              <li>Snacks & Water</li>
-              <li>Chance to be included in the raffle draw</li>
-            </ul>
-            <p style="font-size: 0.82rem; color: var(--text-muted);">
-              <strong>For FB Live Participants:</strong> The FB Live link and access details will be sent to your registered email address.<br />
-              <strong>Note:</strong> Please indicate your <strong>FULL NAME</strong> and <strong>SECTION</strong> in the message section of your payment method.
+              <span class="highlight">₱30.00 for FB LIVE participants</span>. Please <strong>take a screenshot</strong>
+              of the official receipt after completing the payment and <strong>upload your proof of payment</strong> below.
             </p>
 
-            <!-- TODO: Fill in your actual account numbers and names below -->
+            <div class="inclusions-grid">
+              <div class="inclusion-box">
+                <strong>🏛️ Onsite Registration Inclusions:</strong>
+                <ul>
+                  <li>Loot Bags, Snacks and Water</li>
+                  <li>Chance to be one of the raffle winners</li>
+                  <li>Certificate of Attendance</li>
+                </ul>
+              </div>
+              <div class="inclusion-box">
+                <strong>📺 Online Registration Inclusions:</strong>
+                <ul>
+                  <li>Chance to be one of the raffle winners</li>
+                  <li>Certificate of Attendance</li>
+                </ul>
+              </div>
+            </div>
+
+            <p style="font-size: 0.83rem; color: var(--text-muted); line-height: 1.55;">
+              <strong style="color: var(--cream);">For FB LIVE Participants:</strong> The event will be streamed live on the Facebook Page of
+              <strong style="color: var(--gold);">Philippine Association of Food Technologists — Theta Chapter</strong>.<br />
+              <strong style="color: var(--cream);">Note:</strong> Please indicate your <strong>FULL NAME</strong> and <strong>SECTION</strong>
+              in the message section of your payment method to ensure proper identification and verification of your registration.
+            </p>
+
             <div class="gcash-box">
               <div class="gcash-info">
                 <span class="gcash-label">Official Payment Channel • GCash Only</span>
