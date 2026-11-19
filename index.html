@@ -1012,8 +1012,8 @@
           <div class="payment-details-box">
             <p>
               The <strong>Climate on the Plate: Food Safety Challenges in a Changing World</strong> has a
-              registration fee of <span class="highlight">₱80.00 for on-site participants</span> and
-              <span class="highlight">₱40.00 for Zoom participants</span>.
+              registration fee of <span class="highlight">₱60.00 for on-site participants</span> and
+              <span class="highlight">₱30.00 for FB Live participants</span>.
             </p>
             <p style="margin-top: 0.6rem;"><strong>Inclusions of the Registration Fee:</strong></p>
             <ul>
@@ -1022,7 +1022,7 @@
               <li>Chance to be included in the raffle draw</li>
             </ul>
             <p style="font-size: 0.82rem; color: var(--text-muted);">
-              <strong>For Zoom Participants:</strong> The meeting link will be sent to your registered email address.<br />
+              <strong>For FB Live Participants:</strong> The FB Live link and access details will be sent to your registered email address.<br />
               <strong>Note:</strong> Please indicate your <strong>FULL NAME</strong> and <strong>SECTION</strong> in the message section of your payment method.
             </p>
 
@@ -1043,16 +1043,16 @@
               <label class="field-label">Attendance Mode <span class="required">*</span></label>
               <div class="mode-options">
                 <label class="mode-card selected" id="modeOnsiteCard">
-                  <input type="radio" name="attendanceMode" id="radioOnsite" value="On-site (₱80.00)" checked />
+                  <input type="radio" name="attendanceMode" id="radioOnsite" value="On-site (₱60.00)" checked />
                   <span class="mode-title">🏛️ On-site Participant</span>
-                  <span class="mode-price">₱80.00 (Bulwagang Bonifacio)</span>
+                  <span class="mode-price">₱60.00 (Bulwagang Bonifacio)</span>
                   <span class="seat-badge" id="onsiteSeatBadge">Checking seats...</span>
                 </label>
-                <label class="mode-card" id="modeZoomCard">
-                  <input type="radio" name="attendanceMode" id="radioZoom" value="Zoom (₱40.00)" />
-                  <span class="mode-title">💻 Zoom Participant</span>
-                  <span class="mode-price">₱40.00 (Online)</span>
-                  <span class="seat-badge" id="zoomSeatBadge">Checking slots...</span>
+                <label class="mode-card" id="modeFbLiveCard">
+                  <input type="radio" name="attendanceMode" id="radioFbLive" value="FB Live (₱30.00)" />
+                  <span class="mode-title">📺 FB Live Participant</span>
+                  <span class="mode-price">₱30.00 (Online)</span>
+                  <span class="seat-badge">✨ Unlimited slots available</span>
                 </label>
               </div>
             </div>
@@ -1082,7 +1082,7 @@
               <label class="field-label" for="amountSent">
                 Amount Sent <span class="required">*</span>
               </label>
-              <input type="text" id="amountSent" placeholder="Php 80.00" required />
+              <input type="text" id="amountSent" placeholder="Php 60.00" required />
             </div>
 
             <div class="span-2">
@@ -1401,31 +1401,24 @@
 
     const modeRadios = document.querySelectorAll('input[name="attendanceMode"]');
     const onsiteCard = document.getElementById("modeOnsiteCard");
-    const zoomCard = document.getElementById("modeZoomCard");
+    const fbLiveCard = document.getElementById("modeFbLiveCard");
+    const amountSentInput = document.getElementById("amountSent");
 
     modeRadios.forEach(radio => {
       radio.addEventListener("change", () => {
         onsiteCard.classList.toggle("selected", radio.value.includes("On-site") && radio.checked);
-        zoomCard.classList.toggle("selected", radio.value.includes("Zoom") && radio.checked);
-      });
-    });
-
-    // Update Amount Sent placeholder when toggling mode
-    const amountSentInput = document.getElementById("amountSent");
-    modeRadios.forEach(radio => {
-      radio.addEventListener("change", () => {
+        fbLiveCard.classList.toggle("selected", radio.value.includes("FB Live") && radio.checked);
         if (radio.checked) {
-          amountSentInput.placeholder = radio.value.includes("On-site") ? "Php 80.00" : "Php 40.00";
+          amountSentInput.placeholder = radio.value.includes("On-site") ? "Php 60.00" : "Php 30.00";
         }
       });
     });
 
-    // Fetch live verified seat counts from GAS
+    // Fetch live verified On-site seat count from GAS (FB Live has no limit)
     async function loadSeatAvailability() {
       const onsiteBadge = document.getElementById("onsiteSeatBadge");
-      const zoomBadge = document.getElementById("zoomSeatBadge");
       const radioOnsite = document.getElementById("radioOnsite");
-      const radioZoom = document.getElementById("radioZoom");
+      const radioFbLive = document.getElementById("radioFbLive");
 
       if (GAS_WEB_APP_URL === "YOUR_GAS_WEB_APP_URL_HERE") return;
 
@@ -1434,39 +1427,22 @@
         const data = await res.json();
         if (data.status !== "success" || !data.seats) return;
 
-        const { onsiteRemaining, onsiteLimit, zoomRemaining, zoomLimit } = data.seats;
+        const { onsiteRemaining, onsiteLimit } = data.seats;
 
-        // Format On-site badge
         updateSeatBadge(onsiteBadge, onsiteRemaining, onsiteLimit, "seats");
         if (onsiteRemaining <= 0) {
           radioOnsite.disabled = true;
           radioOnsite.checked = false;
           onsiteCard.classList.add("sold-out");
           onsiteCard.classList.remove("selected");
-          if (zoomRemaining > 0) {
-            radioZoom.checked = true;
-            zoomCard.classList.add("selected");
-            amountSentInput.placeholder = "Php 40.00";
-          }
-        }
 
-        // Format Zoom badge
-        updateSeatBadge(zoomBadge, zoomRemaining, zoomLimit, "slots");
-        if (zoomRemaining <= 0) {
-          radioZoom.disabled = true;
-          radioZoom.checked = false;
-          zoomCard.classList.add("sold-out");
-          zoomCard.classList.remove("selected");
-        }
-
-        // Disable registration if both are completely full
-        if (onsiteRemaining <= 0 && zoomRemaining <= 0) {
-          submitBtn.disabled = true;
-          submitBtn.querySelector(".btn-text").textContent = "All Registration Slots Are Full";
+          // Automatically switch to FB Live since it has unlimited slots
+          radioFbLive.checked = true;
+          fbLiveCard.classList.add("selected");
+          amountSentInput.placeholder = "Php 30.00";
         }
       } catch (err) {
         onsiteBadge.textContent = "60 seats total";
-        zoomBadge.textContent = "30 slots total";
       }
     }
 
