@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Climate on the Plate | Evaluation Form</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-dark: #090403;
+      --bg-card: rgba(18, 9, 7, 0.88);
+      --bg-input: rgba(10, 5, 4, 0.9);
+      --ember-red: #8b1e0f;
+      --ember-orange: #d96b16;
+      --gold: #f5d27a;
+      --cream: #fef0c7;
+      --text-main: #f3ece4;
+      --text-muted: #c2b2a3;
+      --border-gold: rgba(245, 210, 122, 0.28);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 1.5rem 1rem 4rem;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* LIVE EMBER BACKGROUND */
+    .live-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse at 50% 105%, rgba(184, 50, 16, 0.5) 0%, rgba(105, 20, 8, 0.3) 40%, #090403 82%),
+        linear-gradient(180deg, #070303 0%, #1a0705 65%, #3d1007 100%);
+      pointer-events: none;
+    }
+
+    #emberCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* COMPACT HERO HEADER */
+    .hero-banner {
+      border-radius: 16px;
+      border: 1px solid var(--border-gold);
+      background: linear-gradient(135deg, rgba(64, 10, 7, 0.92), rgba(145, 39, 13, 0.88), rgba(205, 96, 20, 0.88));
+      padding: 1.65rem 1.5rem;
+      text-align: center;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--cream);
+      background: rgba(0, 0, 0, 0.42);
+      border: 1px solid rgba(254, 240, 199, 0.32);
+      padding: 0.28rem 0.85rem;
+      border-radius: 999px;
+      margin-bottom: 0.65rem;
+    }
+
+    .hero-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-style: italic;
+      font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+      color: var(--cream);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+    }
+
+    .hero-sub {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.88rem, 2vw, 1.08rem);
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      margin-top: 0.35rem;
+    }
+
+    /* PROGRESS BAR */
+    .progress-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 12px;
+      padding: 0.9rem 1.25rem;
+      margin-bottom: 1.25rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 14.28%;
+      background: linear-gradient(90deg, #b82914, #e07a16, #f5d27a);
+      border-radius: 999px;
+      box-shadow: 0 0 12px rgba(245, 210, 122, 0.55);
+      transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* STEP CARDS */
+    .step-card {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius);
+      padding: 1.85rem 2rem;
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      animation: stepFadeIn 0.32s ease;
+    }
+
+    .step-card.active {
+      display: block;
+    }
+
+    @keyframes stepFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-gold);
+      padding-bottom: 0.55rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .intro-text p {
+      font-size: 0.93rem;
+      margin-bottom: 0.85rem;
+      color: var(--text-main);
+    }
+
+    .privacy-box {
+      background: rgba(139, 30, 15, 0.16);
+      border: 1px solid rgba(245, 210, 122, 0.25);
+      border-radius: 10px;
+      padding: 1rem;
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      margin: 1rem 0;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      cursor: pointer;
+      font-size: 0.88rem;
+      color: var(--cream);
+    }
+
+    .checkbox-row input {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      accent-color: var(--ember-orange);
+      flex-shrink: 0;
+    }
+
+    /* INPUTS */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.05rem;
+    }
+
+    @media (min-width: 600px) {
+      .form-grid.two-col { grid-template-columns: 1fr 1fr; }
+      .span-2 { grid-column: span 2; }
+    }
+
+    label.field-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 0.4rem;
+    }
+
+    .req { color: #f87171; }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.75rem 0.95rem;
+      background: var(--bg-input);
+      border: 1px solid rgba(245, 210, 122, 0.24);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.92rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(245, 210, 122, 0.16);
+    }
+
+    select option { background: #140907; color: var(--text-main); }
+
+    /* SPEAKER INFO CARD */
+    .speaker-banner {
+      background: rgba(217, 107, 22, 0.12);
+      border-left: 4px solid var(--gold);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .speaker-banner strong {
+      display: block;
+      font-size: 0.98rem;
+      color: var(--cream);
+    }
+
+    .speaker-banner span {
+      font-size: 0.82rem;
+      color: var(--gold);
+    }
+
+    /* 1-5 RATING PILLS */
+    .scale-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.4rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(245, 210, 122, 0.16);
+      border-radius: 8px;
+      padding: 0.55rem 0.85rem;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin-bottom: 1.15rem;
+    }
+
+    .likert-item {
+      padding: 0.95rem 0;
+      border-bottom: 1px solid rgba(245, 210, 122, 0.12);
+    }
+
+    .likert-item:last-of-type {
+      border-bottom: none;
+    }
+
+    .likert-question {
+      font-size: 0.89rem;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 0.65rem;
+    }
+
+    .rating-pills {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem;
+    }
+
+    .rating-pill {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .rating-pill input {
+      position: absolute;
+      opacity: 0;
+    }
+
+    .rating-pill span {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.55rem 0.25rem;
+      border-radius: 8px;
+      background: var(--bg-input);
+      border: 1px solid rgba(245, 210, 122, 0.22);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: all 0.18s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .rating-pill small {
+      font-size: 0.6rem;
+      font-weight: 500;
+      text-align: center;
+      margin-top: 2px;
+      line-height: 1.1;
+    }
+
+    .rating-pill span:hover {
+      border-color: var(--gold);
+      color: var(--cream);
+    }
+
+    .rating-pill input:checked + span {
+      background: linear-gradient(135deg, #991b0c, #e07a16);
+      border-color: var(--gold);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 14px rgba(224, 122, 22, 0.45);
+    }
+
+    /* SPONSORS CARDS */
+    .sponsors-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0 0.5rem;
+    }
+
+    .sponsor-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(245, 210, 122, 0.22);
+      border-radius: 10px;
+      padding: 0.9rem 1.1rem;
+    }
+
+    .sponsor-name {
+      font-weight: 700;
+      font-size: 0.94rem;
+      color: var(--cream);
+    }
+
+    .sponsor-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.95rem;
+      border-radius: 999px;
+      background: rgba(245, 210, 122, 0.14);
+      border: 1px solid rgba(245, 210, 122, 0.42);
+      color: var(--gold);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .sponsor-link:hover {
+      background: rgba(245, 210, 122, 0.28);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    /* NAVIGATION & ANIMATED SUBMIT BUTTON */
+    .step-error {
+      display: none;
+      background: rgba(185, 28, 28, 0.28);
+      border: 1px solid #f87171;
+      color: #fecaca;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .nav-row {
+      display: flex;
+      gap: 0.85rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn-back {
+      padding: 0.9rem 1.3rem;
+      border-radius: 10px;
+      border: 1px solid rgba(245, 210, 122, 0.3);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--cream);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-back:hover { background: rgba(255, 255, 255, 0.12); }
+
+    .btn-next,
+    .btn-submit {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      padding: 0.95rem 1.4rem;
+      border: 1px solid rgba(245, 210, 122, 0.45);
+      border-radius: 10px;
+      background: linear-gradient(135deg, #991b0c 0%, #c94a12 50%, #e58317 100%);
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 0.98rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 6px 22px rgba(217, 107, 22, 0.4);
+      transition: transform 0.18s, filter 0.2s;
+    }
+
+    .btn-next:hover,
+    .btn-submit:hover:not(:disabled) {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+    }
+
+    .btn-submit::before {
+      content: "";
+      position: absolute;
+      top: 0; left: -75%;
+      width: 50%; height: 100%;
+      background: linear-gradient(120deg, transparent 0%, rgba(254, 240, 199, 0.28) 50%, transparent 100%);
+      transform: skewX(-22deg);
+      animation: sheenSweep 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes sheenSweep {
+      0% { left: -75%; }
+      35%, 100% { left: 135%; }
+    }
+
+    .btn-spinner {
+      display: none;
+      width: 17px;
+      height: 17px;
+      border: 2.5px solid rgba(254, 240, 199, 0.3);
+      border-top-color: var(--cream);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+
+    .btn-submit.is-loading .btn-spinner { display: inline-block; }
+    .btn-submit.is-loading { cursor: wait; opacity: 0.9; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #thankYouCard {
+      text-align: center;
+      padding: 2.75rem 1.75rem;
+    }
+
+    @media (max-width: 520px) {
+      .step-card { padding: 1.35rem 1.15rem; }
+      .rating-pill small { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="live-bg"></div>
+  <canvas id="emberCanvas"></canvas>
+
+  <div class="container">
+    <!-- HEADER -->
+    <header class="hero-banner">
+      <div class="hero-badge">Evaluation Form • Climate on the Plate</div>
+      <h1 class="hero-title">Climate on the Plate</h1>
+      <div class="hero-sub">Food Safety Challenges in a Changing World</div>
+    </header>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-card" id="progressCard">
+      <div class="progress-meta">
+        <span id="stepLabel">Step 1 of 7 • Welcome & Privacy</span>
+        <span id="stepPercent">14%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <form id="evaluationForm" novalidate>
+
+      <!-- STEP 1: WELCOME & DATA PRIVACY -->
+      <section class="step-card active" data-step="1" data-title="Welcome & Privacy">
+        <h2 class="section-title">🔥 Attention, Citizens!</h2>
+        <div class="intro-text">
+          <p><strong>The arena doors are now closing!</strong></p>
+          <p>
+            We would like to extend our sincerest gratitude for your participation in today's event.
+            Your presence has made this gathering truly remarkable.
+          </p>
+          <p>
+            Before you return to your districts, we invite you to share your experience by completing
+            this evaluation form. Your feedback will help us make the next Games even more unforgettable!
+          </p>
+          <p>
+            May the knowledge you take with you be your greatest weapon, and may the odds be ever in your favor! ✨
+          </p>
+        </div>
+
+        <div class="privacy-box">
+          <strong>Data Privacy Notice:</strong> In compliance with the <strong>Data Privacy Act of 2012 (Republic Act No. 10173)</strong>,
+          the organizers of this seminar are committed to protecting your personal information. The data collected in this
+          evaluation form will be used solely for the purpose of seminar administration, documentation, issuance of certificates,
+          and future communication related to this event. Your information will be kept confidential and will not be shared
+          with third parties without your consent.
+        </div>
+
+        <label class="checkbox-row">
+          <input type="checkbox" id="privacyConsent" required />
+          <span>I have read and understood the Data Privacy Notice and I voluntarily consent to the collection and processing of my personal information for this seminar. <span class="req">*</span></span>
+        </label>
+
+        <div class="step-error"></div>
+        <div class="nav-row">
+          <button type="button" class="btn-next" onclick="nextStep()">Enter Evaluation →</button>
+        </div>
+      </section>
+
+      <!-- STEP 2: PERSONAL & STUDENT INFO -->
+      <section class="step-card" data-step="2" data-title="Participant Details">
+        <h2 class="section-title">👤 Personal & Student Information</h2>
+        <div class="form-grid two-col">
+          <div class="span-2">
+            <label class="field-label" for="fullName">Full Name (First Name, Middle Initial, Last Name) <span class="req">*</span></label>
+            <input type="text" id="fullName" placeholder="e.g., Juan A. Dela Cruz" required />
+          </div>
+
+          <div>
+            <label class="field-label" for="email">Email Address <span class="req">*</span></label>
+            <input type="email" id="email" placeholder="Your Certificate will be sent here" required />
+          </div>
+
+          <div>
+            <label class="field-label" for="contactNumber">Contact Number <span class="req">*</span></label>
+            <input type="tel" id="contactNumber" placeholder="09XXXXXXXXX" required />
+          </div>
+
+          <div>
+            <label class="field-label" for="studentId">Student ID <span class="req">*</span></label>
+            <input type="text" id="studentId" placeholder="202X-XXXXX-MN-X" required />
+          </div>
+
+          <div>
+            <label class="field-label" for="section">Year and Section <span class="req">*</span></label>
+            <select id="section" required>
+              <option value="" disabled selected>Select your year & section</option>
+              <option value="BSFT 1-1D">BSFT 1-1D</option>
+              <option value="BSFT 1-1N">BSFT 1-1N</option>
+              <option value="BSFT 2-1D">BSFT 2-1D</option>
+              <option value="BSFT 2-1N">BSFT 2-1N</option>
+              <option value="BSFT 3-1D">BSFT 3-1D</option>
+              <option value="BSFT 3-1N">BSFT 3-1N</option>
+              <option value="BSFT 4-1D">BSFT 4-1D</option>
+              <option value="BSFT 4-1N">BSFT 4-1N</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="step-error"></div>
+        <div class="nav-row">
+          <button type="button" class="btn-back" onclick="prevStep()">← Back</button>
+          <button type="button" class="btn-next" onclick="nextStep()">Next →</button>
+        </div>
+      </section>
+
+      <!-- STEP 3: OVERALL EVENT EVALUATION -->
+      <section class="step-card" data-step="3" data-title="Overall Event">
+        <h2 class="section-title">🏛️ Overall Event Evaluation</h2>
+        <div class="scale-legend">
+          <span><strong>5</strong> Strongly Agree</span>
+          <span><strong>4</strong> Agree</span>
+          <span><strong>3</strong> Neutral</span>
+          <span><strong>2</strong> Disagree</span>
+          <span><strong>1</strong> Strongly Disagree</span>
+        </div>
+
+        <div id="overallQuestions"></div>
+
+        <div class="step-error"></div>
+        <div class="nav-row">
+          <button type="button" class="btn-back" onclick="prevStep()">← Back</button>
+          <button type="button" class="btn-next" onclick="nextStep()">Next →</button>
+        </div>
+      </section>
+
+      <!-- STEP 4: SPEAKER 1 EVALUATION -->
+      <section class="step-card" data-step="4" data-title="Speaker 1">
+        <h2 class="section-title">🎙️ Speakers Evaluation — Speaker 1</h2>
+        <div class="speaker-banner">
+          <strong>Sir Jin Mark De Guia Pagulayan</strong>
+          <span>Topic: Sabi Sa Sarili Ko, Wala Lang 'To: A Talk on Climate Change and Its Effects on Food Safety</span>
+        </div>
+        <div class="scale-legend">
+          <span><strong>5</strong> Strongly Agree</span>
+          <span><strong>4</strong> Agree</span>
+          <span><strong>3</strong> Neutral</span>
+          <span><strong>2</strong> Disagree</span>
+          <span><strong>1</strong> Strongly Disagree</span>
+        </div>
+
+        <div id="speaker1Questions"></div>
+
+        <div class="step-error"></div>
+        <div class="nav-row">
+          <button type="button" class="btn-back" onclick="prevStep()">← Back</button>
+          <button type="button" class="btn-next" onclick="nextStep()">Next →</button>
+        </div>
+      </section>
+
+      <!-- STEP 5: SPEAKER 2 EVALUATION -->
+      <section class="step-card" data-step="5" data-title="Speaker 2">
+        <h2 class="section-title">🎙️ Speakers Evaluation — Speaker 2</h2>
+        <div class="speaker-banner">
+          <strong>Sir Alvier Jade Remollo</strong>
+          <!-- TODO: Update Speaker 2 topic title once finalized -->
+          <span>Topic: (To Be Finalized)</span>
+        </div>
+        <div class="scale-legend">
+          <span><strong>5</strong> Strongly Agree</span>
+          <span><strong>4</strong> Agree</span>
+          <span><strong>3</strong> Neutral</span>
+          <span><strong>2</strong> Disagree</span>
+          <span><strong>1</strong> Strongly Disagree</span>
+        </div>
+
+        <div id="speaker2Questions"></div>
+
+        <div class="step-error"></div>
+        <div class="nav-row">
+          <button type="button" class="btn-back" onclick="prevStep()">← Back</button>
+          <button type="button" class="btn-next" onclick="nextStep()">Next →</button>
+        </div>
+      </section>
+
+      <!-- STEP 6: FEEDBACK -->
+      <section class="step-card" data-step="6" data-title="Feedback">
+        <h2 class="section-title">💬 Feedback & Takeaways</h2>
+
+        <div class="form-grid">
+          <div>
+            <label class="field-label" for="fbEnjoyed">1. What did you enjoy most about the seminar? <span class="req">*</span></label>
+            <textarea id="fbEnjoyed" rows="2" placeholder="Share your favorite highlight..." required></textarea>
+          </div>
+
+          <div id="fbValuableContainer"></div>
+
+          <div>
+            <label class="field-label" for="fbTakeaway">3. What was your biggest takeaway from the event? <span class="req">*</span></label>
+            <textarea id="fbTakeaway" rows="2" placeholder="Key lesson or insight..." required></textarea>
+          </div>
+
+          <div>
+            <label class="field-label" for="fbImprove">4. What aspects of the seminar do you think need improvement? <span class="req">*</span></label>
+            <textarea id="fbImprove" rows="2" placeholder="Constructive suggestions..." required></textarea>
+          </div>
+
+          <div>
+            <label class="field-label" for="fbComments">5. What additional comments, suggestions, or messages would you like to share with the organizing committee?</label>
+            <textarea id="fbComments" rows="2" placeholder="Optional message for BSFT 4-1N Group 4..."></textarea>
+          </div>
+        </div>
+
+        <div class="step-error"></div>
+        <div class="nav-row">
+          <button type="button" class="btn-back" onclick="prevStep()">← Back</button>
+          <button type="button" class="btn-next" onclick="nextStep()">Next →</button>
+        </div>
+      </section>
+
+      <!-- STEP 7: SPONSORS & SUBMIT -->
+      <section class="step-card" data-step="7" data-title="Sponsors & Submit">
+        <h2 class="section-title">🤝 Our Sponsors</h2>
+        <p style="font-size: 0.9rem; color: var(--text-main);">
+          This event will not be possible without the help of our sponsors! To show a little appreciation,
+          we kindly ask that you give their pages a like/follow.
+        </p>
+
+        <div class="sponsors-grid">
+          <div class="sponsor-card">
+            <span class="sponsor-name">Kokola Philippines</span>
+            <a class="sponsor-link" href="https://www.facebook.com/kokolaphilippinesofficial" target="_blank" rel="noopener">
+              Facebook Page ↗
+            </a>
+          </div>
+
+          <!-- HIDDEN FOR THE MEANTIME: O!Save
+          <div class="sponsor-card">
+            <span class="sponsor-name">O!Save</span>
+            <div style="display:flex; gap:0.5rem;">
+              <a class="sponsor-link" href="https://www.facebook.com/osavephilippines" target="_blank" rel="noopener">Facebook ↗</a>
+              <a class="sponsor-link" href="https://www.linkedin.com/company/osave/" target="_blank" rel="noopener">LinkedIn ↗</a>
+            </div>
+          </div>
+          -->
+
+          <div class="sponsor-card">
+            <span class="sponsor-name">Tamkene Phils., Inc.</span>
+            <a class="sponsor-link" href="https://www.facebook.com/tamkenephils" target="_blank" rel="noopener">
+              Facebook Page ↗
+            </a>
+          </div>
+
+          <div class="sponsor-card">
+            <span class="sponsor-name">Village Gourmet Co. Inc.</span>
+            <a class="sponsor-link" href="https://www.facebook.com/VillageGourmetCIPH" target="_blank" rel="noopener">
+              Facebook Page ↗
+            </a>
+          </div>
+
+          <div class="sponsor-card">
+            <span class="sponsor-name">PDAX</span>
+            <a class="sponsor-link" href="https://www.facebook.com/kuyakevsgaming" target="_blank" rel="noopener">
+              Facebook Page ↗
+            </a>
+          </div>
+        </div>
+
+        <div class="step-error"></div>
+        <div class="nav-row">
+          <button type="button" class="btn-back" onclick="prevStep()">← Back</button>
+          <button type="submit" id="submitBtn" class="btn-submit">
+            <span class="btn-spinner" aria-hidden="true"></span>
+            <span class="btn-text">Submit &amp; Claim Certificate</span>
+            <span aria-hidden="true">🏹</span>
+          </button>
+        </div>
+      </section>
+
+    </form>
+
+    <!-- STEP 8: THANK YOU SCREEN -->
+    <section class="step-card" id="thankYouCard">
+      <div style="font-size: 3rem; margin-bottom: 0.75rem;">✨📜🏹</div>
+      <h2 class="hero-sub" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Thank you for answering!</h2>
+      <p style="font-size: 1rem; color: var(--cream); max-width: 520px; margin: 0 auto 1rem;">
+        Your response truly means a lot to us. Until we meet again, Citizens.<br />
+        <strong style="color: var(--gold);">BSFT 4-1N Group 4</strong>
+      </p>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+        Your personalized <strong>Certificate of Attendance (PDF)</strong> has been sent to your email address!
+      </p>
+    </section>
+  </div>
+
+  <script>
+    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW (Same URL as index.html):
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby1CrsuN2Fbzqo4t1nTGkW9v3zy_ZJp-QYaoez-2WuNV5NQhkEL0ShgDOSnkowL0OvEWQ/exec";
+
+    // ==========================================
+    // 1. RENDER LIKERT QUESTIONS CLEANLY
+    // ==========================================
+    const overallList = [
+      { name: "overall1", text: "1. The seminar was well-organized and properly coordinated." },
+      { name: "overall2", text: "2. The objectives of the seminar were clearly communicated." },
+      { name: "overall3", text: "3. The program followed the announced schedule." },
+      { name: "overall4", text: "4. The audio-visual equipment and presentation materials were adequate and within expectations." },
+      { name: "overall5", text: "5. The hosts delivered smooth and organized transitions between program segments, and maintained audience engagement during the program." },
+      { name: "overall6", text: "6. The decorations and visual elements were creative and visually appealing." },
+      { name: "overall7", text: "7. The seminar met my overall expectations." }
+    ];
+
+    const speakerQuestionsTemplate = [
+      "The speaker has sufficient knowledge and expertise about the topic.",
+      "The speaker presented the information clearly and effectively.",
+      "The speaker discussed the topic in an organized and understandable manner.",
+      "The speaker provided relevant examples and practical applications.",
+      "The speaker effectively addressed questions and concerns.",
+      "The presentation was informative and relevant to the seminar's objectives."
+    ];
+
+    const scaleLabels = ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"];
+
+    function buildLikertGroup(containerId, items) {
+      const container = document.getElementById(containerId);
+      items.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "likert-item";
+
+        let pillsHtml = `<div class="rating-pills">`;
+        for (let val = 1; val <= 5; val++) {
+          pillsHtml += `
+            <label class="rating-pill">
+              <input type="radio" name="${item.name}" value="${val}" required />
+              <span>${val}<small>${scaleLabels[val - 1]}</small></span>
+            </label>`;
+        }
+        pillsHtml += `</div>`;
+
+        div.innerHTML = `<div class="likert-question">${item.text} <span class="req">*</span></div>${pillsHtml}`;
+        container.appendChild(div);
+      });
+    }
+
+    buildLikertGroup("overallQuestions", overallList);
+    buildLikertGroup("speaker1Questions", speakerQuestionsTemplate.map((q, i) => ({ name: `sp1_${i + 1}`, text: `${i + 1}. ${q}` })));
+    buildLikertGroup("speaker2Questions", speakerQuestionsTemplate.map((q, i) => ({ name: `sp2_${i + 1}`, text: `${i + 1}. ${q}` })));
+    buildLikertGroup("fbValuableContainer", [{ name: "fbValuable", text: "2. The seminar provided valuable information and meaningful experiences." }]);
+
+    // ==========================================
+    // 2. MULTI-STEP WIZARD NAVIGATION
+    // ==========================================
+    let currentStep = 1;
+    const totalSteps = 7;
+
+    function showStep(step) {
+      document.querySelectorAll(".step-card[data-step]").forEach(card => {
+        card.classList.toggle("active", Number(card.dataset.step) === step);
+      });
+
+      const activeCard = document.querySelector(`.step-card[data-step="${step}"]`);
+      const pct = Math.round((step / totalSteps) * 100);
+      document.getElementById("stepLabel").textContent = `Step ${step} of ${totalSteps} • ${activeCard.dataset.title}`;
+      document.getElementById("stepPercent").textContent = `${pct}%`;
+      document.getElementById("progressFill").style.width = `${pct}%`;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function validateCurrentStep() {
+      const card = document.querySelector(`.step-card[data-step="${currentStep}"]`);
+      const errorBox = card.querySelector(".step-error");
+      errorBox.style.display = "none";
+
+      // Check standard required inputs (checkbox, text, email, select, textarea)
+      const requiredFields = card.querySelectorAll("input[required]:not([type='radio']), select[required], textarea[required]");
+      for (const field of requiredFields) {
+        if (field.type === "checkbox" && !field.checked) {
+          return showStepError(errorBox, "Please check the Data Privacy consent box to proceed.");
+        }
+        if (field.type !== "checkbox" && !field.value.trim()) {
+          field.focus();
+          return showStepError(errorBox, "Please fill out all required fields before continuing.");
+        }
+        if (field.type === "email" && !field.checkValidity()) {
+          field.focus();
+          return showStepError(errorBox, "Please enter a valid email address so we can send your Certificate.");
+        }
+      }
+
+      // Check required radio groups inside current step
+      const radioNames = new Set();
+      card.querySelectorAll("input[type='radio'][required]").forEach(r => radioNames.add(r.name));
+      for (const name of radioNames) {
+        if (!card.querySelector(`input[name="${name}"]:checked`)) {
+          return showStepError(errorBox, "Please select a rating (1–5) for every item before continuing.");
+        }
+      }
+
+      return true;
+    }
+
+    function showStepError(box, msg) {
+      box.textContent = msg;
+      box.style.display = "block";
+      return false;
+    }
+
+    function nextStep() {
+      if (!validateCurrentStep()) return;
+      if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+      }
+    }
+
+    // ==========================================
+    // 3. SUBMIT EVALUATION TO GAS
+    // ==========================================
+    document.getElementById("evaluationForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!validateCurrentStep()) return;
+
+      const card7 = document.querySelector(`.step-card[data-step="7"]`);
+      const errorBox = card7.querySelector(".step-error");
+
+      if (GAS_WEB_APP_URL === "YOUR_GAS_WEB_APP_URL_HERE") {
+        showStepError(errorBox, "Developer Note: Set your GAS_WEB_APP_URL inside evaluation.html.");
+        return;
+      }
+
+      const submitBtn = document.getElementById("submitBtn");
+      const btnText = submitBtn.querySelector(".btn-text");
+      submitBtn.disabled = true;
+      submitBtn.classList.add("is-loading");
+      btnText.textContent = "Submitting & Generating Certificate...";
+
+      const getVal = id => document.getElementById(id).value.trim();
+      const getRadio = name => {
+        const checked = document.querySelector(`input[name="${name}"]:checked`);
+        return checked ? checked.value : "";
+      };
+
+      const payload = {
+        formType: "evaluation",
+        privacyConsent: document.getElementById("privacyConsent").checked,
+        fullName: getVal("fullName"),
+        email: getVal("email"),
+        contactNumber: getVal("contactNumber"),
+        studentId: getVal("studentId"),
+        section: getVal("section"),
+        overall1: getRadio("overall1"),
+        overall2: getRadio("overall2"),
+        overall3: getRadio("overall3"),
+        overall4: getRadio("overall4"),
+        overall5: getRadio("overall5"),
+        overall6: getRadio("overall6"),
+        overall7: getRadio("overall7"),
+        sp1_1: getRadio("sp1_1"),
+        sp1_2: getRadio("sp1_2"),
+        sp1_3: getRadio("sp1_3"),
+        sp1_4: getRadio("sp1_4"),
+        sp1_5: getRadio("sp1_5"),
+        sp1_6: getRadio("sp1_6"),
+        sp2_1: getRadio("sp2_1"),
+        sp2_2: getRadio("sp2_2"),
+        sp2_3: getRadio("sp2_3"),
+        sp2_4: getRadio("sp2_4"),
+        sp2_5: getRadio("sp2_5"),
+        sp2_6: getRadio("sp2_6"),
+        fbEnjoyed: getVal("fbEnjoyed"),
+        fbValuable: getRadio("fbValuable"),
+        fbTakeaway: getVal("fbTakeaway"),
+        fbImprove: getVal("fbImprove"),
+        fbComments: getVal("fbComments")
+      };
+
+      try {
+        const res = await fetch(GAS_WEB_APP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+
+        if (result.status === "success") {
+          document.getElementById("evaluationForm").style.display = "none";
+          document.getElementById("progressCard").style.display = "none";
+          document.getElementById("thankYouCard").classList.add("active");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          throw new Error(result.message || "Submission failed.");
+        }
+      } catch (err) {
+        showStepError(errorBox, "Something went wrong: " + err.message);
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("is-loading");
+        btnText.textContent = "Submit & Claim Certificate";
+      }
+    });
+
+    // ==========================================
+    // 4. RISING EMBERS BACKGROUND
+    // ==========================================
+    (function initEmbers() {
+      const canvas = document.getElementById("emberCanvas");
+      const ctx = canvas.getContext("2d");
+      let w, h, embers = [];
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+        embers = Array.from({ length: 42 }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 2.2 + 0.8,
+          vy: Math.random() * 0.9 + 0.3,
+          a: Math.random() * 0.55 + 0.2
+        }));
+      }
+
+      function loop() {
+        ctx.clearRect(0, 0, w, h);
+        embers.forEach(e => {
+          e.y -= e.vy;
+          if (e.y < -10) { e.y = h + 10; e.x = Math.random() * w; }
+          ctx.fillStyle = `rgba(245, 166, 35, ${e.a})`;
+          ctx.beginPath();
+          ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        requestAnimationFrame(loop);
+      }
+
+      window.addEventListener("resize", resize);
+      resize();
+      loop();
+    })();
+  </script>
+</body>
+</html>
