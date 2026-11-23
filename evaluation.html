@@ -782,7 +782,9 @@
         </div>
       </section>
 
-      <!-- STEP 8: THANK YOU SCREEN -->
+    </form>
+
+    <!-- STEP 8: THANK YOU SCREEN -->
     <section class="step-card" id="thankYouCard">
       <div style="font-size: 3rem; margin-bottom: 0.75rem;">✨📜🏹</div>
       <h2 class="hero-sub" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Thank you for answering!</h2>
@@ -797,8 +799,6 @@
         Submit Another Response
       </button>
     </section>
-
-    </form>
   </div>
 
   <script>
@@ -879,7 +879,6 @@
       const errorBox = card.querySelector(".step-error");
       errorBox.style.display = "none";
 
-      // Check standard required inputs (checkbox, text, email, select, textarea)
       const requiredFields = card.querySelectorAll("input[required]:not([type='radio']), select[required], textarea[required]");
       for (const field of requiredFields) {
         if (field.type === "checkbox" && !field.checked) {
@@ -895,7 +894,6 @@
         }
       }
 
-      // Check required radio groups inside current step
       const radioNames = new Set();
       card.querySelectorAll("input[type='radio'][required]").forEach(r => radioNames.add(r.name));
       for (const name of radioNames) {
